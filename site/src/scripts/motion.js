@@ -38,11 +38,12 @@ function initCounts() {
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) {
       if (!en.isIntersecting) continue;
+      en.target.dataset.counted = "1";
       animNum(en.target, Number(en.target.dataset.countTo));
       io.unobserve(en.target);
     }
   }, { threshold: 0.6 });
-  document.querySelectorAll("[data-count-to]").forEach((el) => io.observe(el));
+  document.querySelectorAll("[data-count-to]:not([data-counted])").forEach((el) => io.observe(el));
   observers.push(io);
 }
 
