@@ -21,8 +21,19 @@ Registry maintained per [`docs/superpowers/plans/2026-07-14-m2-m8-master-plan.md
 | Search open contract | `[data-search-open]` click / ⌘K / Ctrl+K | Any element carrying the attribute opens the overlay |
 | Config seam | `site/src/config.mjs` (`repoUrl`) | Grows into `platform.config.json` at CP-B |
 
+## Frozen at CP-B (M3 + M4, 2026-07-14)
+
+| Contract | Definition lives at | Notes |
+|---|---|---|
+| Portability seam keys | `platform.config.json` | Exactly `name`, `host`, `repo` (null = no-remote), `site.baseUrl`, `judge.ci`, `mcp.enabled`. `site/src/config.mjs` derives `config.repoUrl = repo ? https://host/repo : null` |
+| Marketplace shape | `toolkit/marketplace.json` | `{ name, owner{name,url}, plugins:[{ name, source, description, skills:[{name,purpose,shipsIn}] }] }`; `shipsIn: null` = shipped, `"M<N>"` = upcoming |
+| Plugin manifest | `toolkit/plugins/openresearch/.claude-plugin/plugin.json` | `{ name, version, description, author }`; `version` is the installer's pinning anchor (0.3.0) |
+| Skill CLI names | `toolkit/plugins/openresearch/skills/` | `judge`, `paper-reader`, `publish` (SKILL.md instruction docs; advisory `judge` never blocks) |
+| Installer commands | `toolkit/installer/bin/openresearch.mjs` | `openresearch init` / `update [--version <semver>]` / `doctor`, all with `--dry-run`; bin name `openresearch` |
+| Toolkit derive output | `site/scripts/derive.mjs` → `site/src/data/toolkit.json` | `{ name, version, description, source, skills:[{name,purpose,shipsIn}], install:{init, marketplaceAdd} }` (additive; existing derive outputs unchanged) |
+| No-remote fallback | `publish` skill + installer | When `platform.config.json.repo` is null, flows print exact push/PR commands instead of calling `gh` |
+
 ## Planned freezes
 
-- **CP-B (M3+M4):** skill CLI names (`publish`, `paper-reader`, judge), `toolkit/marketplace.json` shape, installer commands (`npx openresearch init`/`update`), `platform.config.json` keys.
 - **CP-C (M5+M6):** adoption record schema, extended `evidence{}` shape, arena scoring inputs + `arena.json` shape, `/people/<handle>` route + profile JSON shape.
 - **CP-D (M7+M8):** corpus-index artifact format, Q&A MCP tool names/signatures, watchlist YAML shape, digest output location.
