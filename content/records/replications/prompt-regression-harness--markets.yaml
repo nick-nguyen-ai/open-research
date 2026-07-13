@@ -1,0 +1,10 @@
+contribution_id: prompt-regression-harness
+replicator:
+  name: Sofia Marchetti
+  team: markets-analytics
+  division: Markets
+workflow: Markets summarization prompt suite wired into our pre-merge CI pipeline.
+method: Ported the baseline-diff harness into our CI and ran it against seeded regressions.
+outcome: replicated
+measured_delta: 9 of 10 seeded regressions caught
+date: 2026-07-14

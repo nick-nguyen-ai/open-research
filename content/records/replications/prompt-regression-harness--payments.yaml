@@ -1,0 +1,10 @@
+contribution_id: prompt-regression-harness
+replicator:
+  name: Hana Kim
+  team: payments-platform
+  division: Payments
+benchmark_id: internal-eval-suite
+method: Stood up the harness on our payments prompt set and seeded ten known regressions.
+outcome: replicated
+measured_delta: 8 of 10 seeded regressions caught
+date: 2026-07-14

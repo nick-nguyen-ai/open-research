@@ -1,0 +1,10 @@
+contribution_id: batch-inference-queueing
+replicator:
+  name: Sofia Marchetti
+  team: markets-analytics
+  division: Markets
+workflow: Markets research batch scoring endpoint, 12h production traffic replay.
+method: Added the size-aware priority queue in front of our batch endpoint and replayed 12h of traffic.
+outcome: replicated
+measured_delta: p99 -47%, throughput flat
+date: 2026-07-14
