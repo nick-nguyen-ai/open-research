@@ -4,6 +4,12 @@ Contribution: `eval-rubric-drift`. Executed the `publish` skill's non-interactiv
 no-remote path (validate -> branch -> commit -> printed fallback). Proof for CP-B that
 the flow works end to end on a machine with no git remote.
 
+## Scope
+
+The publish skill's step 3 (judge, advisory) is a session-interactive step and is
+deliberately outside this non-interactive transcript; the judge flow is exercised
+separately in `toolkit/plugins/openresearch/skills/judge/walkthrough.md`.
+
 ## Transcript
 
 ```text

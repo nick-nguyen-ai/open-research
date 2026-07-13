@@ -13,8 +13,8 @@ created: 2026-07-13
 updated: 2026-07-14
 ---
 
-*An LLM judge has an effective rubric that is the sum of its prompt and its model
-weights — and both of those move underneath you.* Swap the judge model for a newer
+An LLM judge has an effective rubric that is the sum of its prompt and its model
+weights — and both of those move underneath you. Swap the judge model for a newer
 snapshot, or tweak a single "be strict about citations" line in the judge prompt, and the
 scores shift for the whole suite. Nothing about the system under test changed, but your
 dashboard says it got better or worse, and someone will act on that number.

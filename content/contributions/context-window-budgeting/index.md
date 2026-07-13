@@ -13,8 +13,8 @@ created: 2026-07-13
 updated: 2026-07-14
 ---
 
-*Treat the context window as a budget with named line items, not a bucket you fill until
-it overflows.* An agent that greedily appends every tool result and every retrieved
+Treat the context window as a budget with named line items, not a bucket you fill until
+it overflows. An agent that greedily appends every tool result and every retrieved
 chunk will hit the limit exactly when it needs room to reason, and the eviction that
 follows is blind — it drops whatever is oldest, not whatever matters least.
 
