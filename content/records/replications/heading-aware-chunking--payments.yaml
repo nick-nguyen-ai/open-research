@@ -1,0 +1,9 @@
+contribution_id: heading-aware-chunking
+replicator:
+  name: Ada
+  team: Payments Engineering
+benchmark_id: policy-rag-bench
+method: Re-ran the bundle's comparison against our payments policy corpus.
+outcome: replicated
+measured_delta: recall@10 +9pt
+date: 2026-07-10

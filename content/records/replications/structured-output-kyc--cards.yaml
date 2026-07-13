@@ -1,0 +1,9 @@
+contribution_id: structured-output-kyc
+replicator:
+  name: Grace
+  team: Cards
+benchmark_id: internal-eval-suite
+method: Ran the parallel harness on our card onboarding extraction for one week.
+outcome: replicated
+measured_delta: parse failures -79%
+date: 2026-07-12
