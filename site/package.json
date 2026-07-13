@@ -6,7 +6,8 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "dev": "node scripts/derive.mjs && astro dev",
-    "build": "node scripts/derive.mjs && astro build && pagefind --site dist",
+    "build": "node scripts/derive.mjs && node scripts/build-index.mjs && astro build && pagefind --site dist",
+    "index": "node scripts/build-index.mjs",
     "test": "node --test"
   },
   "dependencies": {
