@@ -19,7 +19,7 @@ claude plugin install openresearch@openresearch
 `npx openresearch update [--version <semver>]` re-resolves and reinstalls the pinned
 plugin version. Every command accepts `--dry-run` to print the exact commands it would run.
 
-## Plugin: `openresearch` (v0.3.0)
+## Plugin: `openresearch` (v0.4.0)
 
 Instruction-only skills (they name exact shell commands; no API keys, no provider code):
 
@@ -28,8 +28,8 @@ Instruction-only skills (they name exact shell commands; no API keys, no provide
 | `judge` | Advisory three-axis review (clarity / claims-vs-evidence / reproducibility), never blocking. | ready |
 | `paper-reader` | Structured read of one contribution and its evidence. | ready |
 | `publish` | Validate → judge → branch `contribute/<id>` → PR (or no-remote fallback). | ready |
-| `try-this-paper` | Run a contribution's bundle against your workflow. | ships in M7 |
-| `write-replication` | Turn a replication run into a record. | ships in M7 |
+| `try-this-paper` | Run a contribution's bundle against your workflow. | ready |
+| `write-replication` | Turn a replication run into a record. | ready |
 
 ## Layout
 
@@ -38,8 +38,8 @@ toolkit/
 ├─ marketplace.json                 # marketplace manifest + skill roster
 ├─ plugins/openresearch/
 │  ├─ .claude-plugin/plugin.json    # name, version (pinning anchor), description
-│  ├─ mcp/README.md                 # M7 placeholder (no dead config)
-│  └─ skills/{judge,paper-reader,publish}/{SKILL.md,walkthrough.md}
+│  ├─ mcp/server.mjs                # Q&A MCP server (stdio JSON-RPC 2.0) + DEMO.md transcript
+│  └─ skills/{judge,paper-reader,publish,try-this-paper,write-replication}/{SKILL.md,walkthrough.md}
 └─ installer/                       # npm package `openresearch` (bin: openresearch)
 ```
 

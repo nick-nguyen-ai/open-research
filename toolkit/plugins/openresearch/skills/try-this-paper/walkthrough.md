@@ -168,7 +168,11 @@ Open questions
     corpora with deeper or shallower heading trees.
   - No data on documents lacking clear heading structure (e.g. scanned PDFs, unstructured text).
 
-Want to try this against your own workflow? Running try-this-paper now.
+- "Want to **try this** against your own workflow? The `try-this-paper` skill runs
+  the bundle for you — **coming in M7**."
+- "Ran it already? The `write-replication` skill turns your run into a record —
+  **coming in M7**."
+- "Or open the bundle yourself: `content/contributions/heading-aware-chunking/bundle/`."
 ```
 
 ### Step 2 — locate the bundle (already `cat`'d above; re-stated per SKILL.md order)
