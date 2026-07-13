@@ -48,6 +48,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       "/contributions/structured-output-kyc/", "/contributions/temperature-drift-evals/",
       "/contributions/retrieval-reranker-lite/", "/contributions/pii-scrubber-prompts/",
       "/contributions/batch-inference-queueing/", "/contributions/prompt-regression-harness/",
+      "/contributions/context-window-budgeting/", "/contributions/eval-rubric-drift/",
     ]
   });
   if (problems.length > 0) {
