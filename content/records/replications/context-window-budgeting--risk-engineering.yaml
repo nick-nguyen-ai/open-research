@@ -1,0 +1,10 @@
+contribution_id: context-window-budgeting
+replicator:
+  name: Daniel Okafor
+  team: risk-engineering
+  division: Risk
+workflow: risk research agent with a fixed 32k context budget across tool results and retrieved chunks
+method: Adopted named context line-items with hard per-item caps and re-ran the agent over our 60-task eval, comparing task completion before and after.
+outcome: replicated
+measured_delta: task completion +7pt, context overflows -80%
+date: 2026-07-14
