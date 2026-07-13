@@ -6,6 +6,7 @@ test("fmtDate long and short from string and Date", () => {
   assert.equal(fmtDate("2026-07-13", "long"), "July 2026");
   assert.equal(fmtDate("2026-06-30", "short"), "30 Jun");
   assert.equal(fmtDate(new Date("2026-07-13T00:00:00Z"), "long"), "July 2026");
+  assert.equal(fmtDate("2026-06-30", "full"), "30 June 2026");
 });
 
 test("readTime floors at 1 minute, 220 wpm", () => {

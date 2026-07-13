@@ -34,7 +34,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
       <article class={`art tier-${tier}`} data-pagefind-body
                data-pagefind-meta={`tier:${tierLabel(tier)}, category:${fm.category}, evidence:${verified} replications`}>
         <span class="caps" style="color: var(--oxblood)">
-          {tierLabel(tier)} · {fm.category}{isNote && ` · ${fmtDate(fm.updated, "short")} ${fmtDate(fm.updated, "long")}`}
+          {tierLabel(tier)} · {fm.category}{isNote && ` · ${fmtDate(fm.updated, "full")}`}
         </span>
         <h1 class="font-display rt" transition:name={`title-${slug}`}>{fm.title}</h1>
         <p class="byline">
