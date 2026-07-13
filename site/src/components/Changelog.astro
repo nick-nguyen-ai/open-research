@@ -1,0 +1,30 @@
+---
+import { fmtDate } from "../lib/format.mjs";
+const { items = [] } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="changelog rv" aria-label="Changelog">
+    <p class="caps">Changelog</p>
+    <ul>
+      {items.map((c) => (
+        <li>
+          <code class="rev">{c.rev}</code>
+          <span class="cd">{fmtDate(c.date, "short")}</span>
+          <span class="cs">{c.subject}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+<style>
+  .changelog { border-top: 1px solid var(--hairline); margin-top: 30px; padding-top: 14px; }
+  .changelog .caps { color: var(--oxblood); margin: 0 0 10px; }
+  .changelog ul { list-style: none; margin: 0; padding: 0;
+                  font-family: system-ui, sans-serif; font-size: 12.5px; }
+  .changelog li { display: grid; grid-template-columns: auto auto 1fr; gap: 12px; align-items: baseline;
+                  padding: 5px 0; border-bottom: 1px solid var(--hairline); }
+  .changelog .rev { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; color: var(--oxblood); }
+  .changelog .cd { color: var(--slate); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .changelog .cs { color: var(--ink); }
+  @media (max-width: 640px) { .changelog li { grid-template-columns: 1fr; gap: 2px; } }
+</style>

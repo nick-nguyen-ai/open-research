@@ -1859,3 +1859,14 @@ Every section of the design delta maps to a task:
 **Frozen-contract preservation:** `derive()`'s four outputs keep their shapes (`evidence` gains keys additively, existing keys byte-identical; `derive.test.js` unchanged); loader gains `adoptions` additively (existing keys unchanged; the four M1 schemas untouched); `arena.json`/`people.json` are new files from new functions; all existing routes and config keys unchanged; `config.repoUrl` preserved.
 
 **Cycle-2 execution-delta lessons applied:** (1) no `import.meta.url`-relative config reads in bundled page/component code — pages read only imported `../data/*.json`; (2) `derive.mjs` never imports `config.mjs` — `deriveArena`/`derivePeople` take loaded `content`, the CLI reads `platform.config.json` via the existing `import.meta.url` toolkit block; (3) card-visible copy stays plain text (seeds are YAML, no italic spans to break `firstSentence`); (4) all git steps target `c3-evidence-arena`, never `main`; the `git log` changelog invocation is pinned exactly and the `validate.yml` `site-build` `fetch-depth: 0` is verified (Task 2 Step 7) so no workflow change is needed.
+
+---
+
+## Execution deltas (recorded at final review, 2026-07-14)
+
+1. **Task 3 — two brief-staleness corrections, engine unchanged:** the tie-break test's hardcoded expectation ignored that the replicator scores 12 and slots 2nd (fixed to `["Bob","Zoe","Ann","Cid"]`); the "Sofia = 75" sanity anchor is the post-Task-4 state (67 before adoptions are seeded; 75 after — both verified by hand and empirically).
+2. **Task 3 — two tests added** beyond the brief's matrix: multi-author full-credit, published-only gating.
+3. **Task 7 — check-links insertion point differed** (eval-rubric-drift shared a line); route added on the following line, same array.
+4. **Final batch — gate anchors made CP-E-proof** (floors/invariants instead of exact seed values; CP-E adds contributions) and the arena tab focus ring fixed (`.tabin:focus-visible`-scoped rules; the label-side rule never fired).
+
+Deferred minors tracked in `.superpowers/sdd/progress.md` (C3 sections); notable backlog: byline base-slug vs collision-suffixed handle (dormant misattribution risk — thread resolved handles to bylines when a collision first appears).

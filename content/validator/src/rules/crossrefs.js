@@ -5,7 +5,7 @@ export function check(content) {
 
   const flag = (file, message) => findings.push({ file, rule: "crossref", message });
 
-  for (const r of [...content.replications, ...content.endorsements]) {
+  for (const r of [...content.replications, ...content.endorsements, ...(content.adoptions ?? [])]) {
     const id = r.data?.contribution_id;
     if (id && !contributionIds.has(id)) {
       flag(r.file, `contribution_id "${id}" does not match any contribution`);

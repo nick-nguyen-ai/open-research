@@ -10,6 +10,7 @@ export function loadContent(root) {
     replications: [],
     endorsements: [],
     benchmarks: [],
+    adoptions: [],
     errors: []
   };
 
@@ -50,6 +51,7 @@ export function loadContent(root) {
 
   loadYamlDir(content, join(root, "records", "replications"), "replications");
   loadYamlDir(content, join(root, "records", "endorsements"), "endorsements");
+  loadYamlDir(content, join(root, "records", "adoptions"), "adoptions");
   loadYamlDir(content, join(root, "benchmarks"), "benchmarks");
   return content;
 }

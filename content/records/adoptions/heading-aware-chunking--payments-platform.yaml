@@ -1,0 +1,10 @@
+contribution_id: heading-aware-chunking
+adopter:
+  name: Hana Kim
+  team: payments-platform
+  division: Payments
+pipeline: payments-policy-rag
+status: active
+since: 2026-07-05
+impact: mis-ranked passages down 22% on the production policy retrieval path
+date: 2026-07-12

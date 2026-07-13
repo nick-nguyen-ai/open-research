@@ -8,8 +8,9 @@ import ResultBand from "../../components/ResultBand.astro";
 import CitationBlock from "../../components/CitationBlock.astro";
 import ContentsList from "../../components/ContentsList.astro";
 import Rail from "../../components/Rail.astro";
+import Changelog from "../../components/Changelog.astro";
 import evidence from "../../data/evidence.json";
-import { fmtDate, readTime, tierLabel } from "../../lib/format.mjs";
+import { fmtDate, readTime, tierLabel, slugifyName } from "../../lib/format.mjs";
 
 export async function getStaticPaths() {
   const entries = await getCollection("contributions", (e) => e.data.status === "published");
@@ -22,7 +23,8 @@ const fm = entry.data;
 const tier = fm.tier;
 const { Content, headings } = await render(entry);
 const h2s = headings.filter((h) => h.depth === 2);
-const ev = evidence[slug] ?? { replications: [], endorsements: [], rev: null };
+const ev = evidence[slug] ?? { replications: [], endorsements: [], adoptions: [], changelog: [], rev: null };
+const adoptions = ev.adoptions ?? [];
 const isNote = tier === "note";
 const showBand = Boolean(fm.result) && (tier === "finding" || tier === "technical-report");
 const verified = ev.replications.filter((r) => r.outcome === "replicated").length;
@@ -38,7 +40,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
         </span>
         <h1 class="font-display rt" transition:name={`title-${slug}`}>{fm.title}</h1>
         <p class="byline">
-          {fm.authors.map((a, i) => <Fragment>{i > 0 && ", "}<b>{a.name}</b> · {a.team}</Fragment>)}
+          {fm.authors.map((a, i) => <Fragment>{i > 0 && ", "}<a class="pl" href={`/people/${slugifyName(a.name)}`}><b>{a.name}</b></a> · {a.team}</Fragment>)}
           {" "}· {fmtDate(fm.updated, "long")}{!isNote && ` · ${readTime(entry.body)}`}
         </p>
         {!isNote && <ActionRow slug={slug} bundle={fm.replication_bundle} benchmarks={fm.benchmarks ?? []} />}
@@ -47,15 +49,19 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
         <div class="article-body">
           <Content />
         </div>
+        <Changelog items={ev.changelog ?? []} />
         {!isNote && <CitationBlock fm={fm} slug={slug} rev={ev.rev} />}
         {isNote && (
           <div class="notebar">
-            <span>{verified} replication{verified === 1 ? "" : "s"} yet</span>
+            <span>
+              {verified} replication{verified === 1 ? "" : "s"}
+              {adoptions.length > 0 ? ` · ${adoptions.length} adoption${adoptions.length === 1 ? "" : "s"}` : ""}
+            </span>
             <a href="/contribute">Tried it? Add evidence →</a>
           </div>
         )}
       </article>
-      {!isNote && <Rail headings={h2s} replications={ev.replications} endorsements={ev.endorsements} />}
+      {!isNote && <Rail headings={h2s} replications={ev.replications} endorsements={ev.endorsements} adoptions={adoptions} />}
     </div>
     <Footer />
   </main>
@@ -68,6 +74,8 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
   .rt { font-weight: 600; font-size: 30px; line-height: 1.15; margin: 10px 0 8px; text-wrap: balance; }
   .byline { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate); margin-bottom: 20px; }
   .byline b { color: var(--ink); }
+  .byline a.pl { color: inherit; text-decoration: none; border-bottom: 1px solid var(--hairline); }
+  .byline a.pl:hover { border-color: var(--oxblood); }
   .notebar { font-family: system-ui, sans-serif; font-size: 11.5px; color: var(--slate);
              border-top: 1px solid var(--hairline); margin-top: 24px; padding-top: 12px;
              display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }

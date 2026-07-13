@@ -1,5 +1,136 @@
 ---
-import Placeholder from "../components/Placeholder.astro";
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import { fmtDate, slugifyName } from "../lib/format.mjs";
+import arena from "../data/arena.json";
+
+const boards = [
+  { key: "individuals", label: "Individuals" },
+  { key: "teams", label: "Teams" },
+  { key: "divisions", label: "Divisions" }
+];
+const rankClass = (i) => (i < 3 ? "rank top" : "rank");
 ---
-<Placeholder title="Arena" milestone="M6" active="arena"
-  blurb="Individual, team, and division rankings weighted to non-gameable signals: replications by other teams, adoption, measured deltas. Validating others' work will earn points comparably to contributing." />
+<Base title="Arena · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="arena" />
+
+    <section class="rv" style="padding: 40px 0 6px; max-width: 62ch;">
+      <p class="caps" style="color: var(--oxblood)">Arena</p>
+      <h1 class="font-display" style="font-weight: 600; font-size: clamp(28px,4vw,40px); line-height: 1.12; margin: 10px 0 12px; text-wrap: balance;">
+        Ranked by what <em>other</em> teams verified.
+      </h1>
+      <p style="color: var(--slate); margin: 0;">
+        Weighted to non-gameable signals: independent replications, adoption in real pipelines, measured deltas.
+        Validating others' work earns comparably to contributing. Generated {fmtDate(arena.generated, "full")}.
+      </p>
+    </section>
+
+    <div class="tabs rv">
+      {boards.map((b, i) => (
+        <Fragment>
+          <input type="radio" name="board" id={`tab-${b.key}`} class="tabin" checked={i === 0} />
+          <label for={`tab-${b.key}`} class="tablab">{b.label}</label>
+        </Fragment>
+      ))}
+
+      <!-- Individuals -->
+      <section class="board" data-board="individuals">
+        <div class="row head"><span>#</span><span>Name</span><span>Team</span><span class="num">Score</span></div>
+        {arena.individuals.map((r, i) => (
+          <a class="row" href={`/people/${r.handle}`}>
+            <span class={rankClass(i)}>{i + 1}</span>
+            <span class="who">{r.name}</span>
+            <span class="team">{r.team}{r.division ? ` · ${r.division}` : ""}</span>
+            <span class="num score">{r.score}</span>
+          </a>
+        ))}
+      </section>
+
+      <!-- Teams -->
+      <section class="board" data-board="teams">
+        <div class="row head"><span>#</span><span>Team</span><span>Division</span><span class="num">Score</span></div>
+        {arena.teams.map((r, i) => (
+          <div class="row">
+            <span class={rankClass(i)}>{i + 1}</span>
+            <span class="who">{r.team}</span>
+            <span class="team">{r.division ?? "—"} · {r.members.length} member{r.members.length === 1 ? "" : "s"}</span>
+            <span class="num score">{r.score}</span>
+          </div>
+        ))}
+      </section>
+
+      <!-- Divisions -->
+      <section class="board" data-board="divisions">
+        <div class="row head"><span>#</span><span>Division</span><span>Teams</span><span class="num">Score</span></div>
+        {arena.divisions.map((r, i) => (
+          <div class="row">
+            <span class={rankClass(i)}>{i + 1}</span>
+            <span class="who">{r.division}</span>
+            <span class="team">{r.teams.length} team{r.teams.length === 1 ? "" : "s"}</span>
+            <span class="num score">{r.score}</span>
+          </div>
+        ))}
+      </section>
+    </div>
+
+    <section class="scoring rv">
+      <p class="caps" style="color: var(--oxblood)">How scoring works</p>
+      <p class="sl">Transparency is the anti-gaming device. Points per person:</p>
+      <ul class="sl">
+        <li><b>+10</b> — you published a contribution (any tier).</li>
+        <li><b>+15</b> — another team replicated your contribution (the strongest signal).</li>
+        <li><b>+12</b> — you replicated another team's contribution (reviewing earns like authoring).</li>
+        <li><b>+8</b> — a team adopted your contribution (active or trialing); <b>+4</b> more if they recorded a measured impact.</li>
+        <li><b>+3</b> — someone endorsed your contribution.</li>
+        <li><b>0</b> — same-team replications, and retired adoptions (non-gameable rules).</li>
+      </ul>
+      <p class="sl">Team scores sum member points attributed while on that team; divisions roll up team scores.
+        Ties break by replication count, then alphabetically. Weights are tunable; the inputs are frozen.</p>
+    </section>
+
+    <Footer />
+  </main>
+</Base>
+<style>
+  /* pure-CSS radio tabs: first tab checked server-side → visible with no JS */
+  .tabs { margin: 26px 0 8px; }
+  .tabin { position: absolute; opacity: 0; pointer-events: none; }
+  .tablab { display: inline-block; font-family: system-ui, sans-serif; font-size: 12.5px;
+            letter-spacing: .08em; text-transform: uppercase; color: var(--slate);
+            padding: 8px 14px; border: 1px solid var(--hairline); border-radius: 6px;
+            margin-right: 8px; cursor: pointer; user-select: none; }
+  .board { display: none; margin-top: 18px; }
+  /* wire each checked radio to its label + its board */
+  #tab-individuals:checked ~ label[for="tab-individuals"],
+  #tab-teams:checked ~ label[for="tab-teams"],
+  #tab-divisions:checked ~ label[for="tab-divisions"] { color: var(--paper); background: var(--oxblood); border-color: var(--oxblood); }
+  #tab-individuals:checked ~ .board[data-board="individuals"],
+  #tab-teams:checked ~ .board[data-board="teams"],
+  #tab-divisions:checked ~ .board[data-board="divisions"] { display: block; }
+  .tablab:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 2px; } /* inert: labels aren't focusable, radio is visually hidden — kept as documentation of intent */
+  #tab-individuals:focus-visible ~ label[for="tab-individuals"],
+  #tab-teams:focus-visible ~ label[for="tab-teams"],
+  #tab-divisions:focus-visible ~ label[for="tab-divisions"] { outline: 2px solid var(--oxblood); outline-offset: 2px; }
+
+  .row { display: grid; grid-template-columns: 44px 1.4fr 1.6fr auto; gap: 14px; align-items: baseline;
+         padding: 11px 6px; border-bottom: 1px solid var(--hairline); text-decoration: none; color: inherit; }
+  a.row:hover { background: var(--soft); }
+  .row.head { font-family: system-ui, sans-serif; font-size: 10.5px; letter-spacing: .16em;
+              text-transform: uppercase; color: var(--slate); border-bottom: 2px solid var(--ink); }
+  .rank { font-variant-numeric: tabular-nums; color: var(--slate); font-size: 14px; }
+  .rank.top { color: var(--oxblood); font-weight: 700; }
+  .who { color: var(--ink); font-weight: 600; }
+  .team { color: var(--slate); font-size: 13px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .score { color: var(--ink); font-weight: 600; }
+  .scoring { margin: 34px 0 8px; max-width: 68ch; }
+  .scoring .sl { color: var(--slate); font-size: 14px; line-height: 1.6; }
+  .scoring ul.sl { padding-left: 18px; }
+  .scoring b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) {
+    .row { grid-template-columns: 34px 1fr auto; }
+    .row .team { display: none; }
+  }
+</style>
