@@ -21,6 +21,8 @@
     "updated": { "type": "string", "format": "date" },
     "replication_bundle": { "type": "string", "pattern": "^bundle/" },
     "benchmarks": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" } },
+    "result": { "type": "string", "minLength": 3, "maxLength": 80 },
+    "result_detail": { "type": "string", "minLength": 3, "maxLength": 160 },
     "related": {
       "type": "object",
       "additionalProperties": false,

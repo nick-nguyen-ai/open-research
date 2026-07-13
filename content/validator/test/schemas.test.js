@@ -39,3 +39,16 @@ test("rejects author without team", () => {
 test("throws for unknown schema name", () => {
   assert.throws(() => getValidator("nope"), /No schema/);
 });
+
+test("contribution with result and result_detail validates", () => {
+  const validate = getValidator("contribution");
+  const ok = validate({
+    id: "with-result", title: "A finding with a headline result",
+    tier: "finding", authors: [{ name: "N", team: "T" }],
+    category: "evals", tags: ["caching"], status: "published",
+    created: "2026-07-13", updated: "2026-07-13",
+    result: "−60% cost per run",
+    result_detail: "$18.40 → $7.30 · 30 nightly runs · scores unchanged"
+  });
+  assert.equal(ok, true, JSON.stringify(validate.errors));
+});

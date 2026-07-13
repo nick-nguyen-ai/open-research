@@ -12,6 +12,8 @@ created: 2026-07-13
 updated: 2026-07-13
 replication_bundle: bundle/
 benchmarks: [internal-eval-suite]
+result: −60% cost per run
+result_detail: $18.40 → $7.30 · 30 nightly runs · scores unchanged
 ---
 
 ## Summary

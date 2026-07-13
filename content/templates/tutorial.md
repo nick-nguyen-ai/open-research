@@ -12,13 +12,13 @@ created: <YYYY-MM-DD>
 updated: <YYYY-MM-DD>
 ---
 
-## What you'll learn
+## You'll need
 
-The capability the reader walks away with.
+Access, tooling, and background assumed — a short list.
 
-## Prerequisites
+## You'll build
 
-Access, tooling, and background assumed.
+The artifact and capability the reader walks away with.
 
 ## Steps
 
