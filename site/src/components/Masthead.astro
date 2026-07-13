@@ -1,0 +1,42 @@
+---
+const { active = "" } = Astro.props;
+const items = [
+  { href: "/browse", label: "Browse", key: "browse" },
+  { href: "/benchmarks", label: "Benchmarks", key: "benchmarks" },
+  { href: "/arena", label: "Arena", key: "arena" },
+  { href: "/toolkit", label: "Toolkit", key: "toolkit" }
+];
+---
+<header class="mast">
+  <a class="logo font-display" href="/">Open<em>Research</em></a>
+  <div class="right">
+    <nav aria-label="Primary">
+      {items.map((i) => (
+        <a href={i.href} aria-current={active === i.key ? "page" : undefined}>{i.label}</a>
+      ))}
+    </nav>
+    <button class="kbd" type="button" data-search-open aria-label="Search">⌘K</button>
+    <button class="mode" type="button" data-theme-toggle aria-label="Toggle dark mode">◐</button>
+  </div>
+</header>
+<style>
+  .mast { display: flex; justify-content: space-between; align-items: baseline; gap: 20px;
+          padding-bottom: 14px; position: relative; }
+  /* signature moment 1: the masthead rule draws in on first load */
+  .mast::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+                 border-bottom: 2px solid var(--ink); transform-origin: left;
+                 animation: ruledraw .7s cubic-bezier(.2,.6,.2,1) both; }
+  @keyframes ruledraw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .logo { font-weight: 600; font-size: 21px; text-decoration: none; color: inherit; }
+  .logo em { font-style: italic; font-weight: 500; color: var(--oxblood); }
+  .right { display: flex; gap: 18px; align-items: baseline; }
+  nav { display: flex; gap: 22px; }
+  nav a { text-decoration: none; font-family: system-ui, sans-serif; font-size: 12.5px;
+          letter-spacing: .08em; text-transform: uppercase; color: var(--slate);
+          border-bottom: 2px solid transparent; padding-bottom: 2px;
+          transition: color .25s, border-color .25s; }
+  nav a:hover, nav a:focus-visible, nav a[aria-current="page"] { color: var(--oxblood); border-color: var(--oxblood); outline: none; }
+  .kbd, .mode { cursor: pointer; }
+  .mode { background: none; border: none; color: var(--slate); font-size: 15px; }
+  .mode:hover { color: var(--oxblood); }
+</style>

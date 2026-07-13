@@ -1,9 +1,60 @@
 ---
 import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import Card from "../components/Card.astro";
+import stats from "../data/stats.json";
+import cards from "../data/cards.json";
+
+const verified = cards.filter((c) => c.replications > 0).slice(0, 4);
+const recent = cards.filter((c) => !verified.includes(c)).slice(0, 6);
 ---
 <Base>
-  <main class="max-w-[1080px] mx-auto px-6 py-16">
-    <p class="caps">OpenResearch</p>
-    <h1 class="font-display font-semibold text-4xl mt-3">Scaffold up.</h1>
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead />
+    <section class="hero">
+      <p class="caps">The internal record of applied AI research</p>
+      <h1 class="font-display">Findings your colleagues have <em>already verified.</em></h1>
+      <p class="stand">Every technique published here carries its evidence: who replicated it, on which
+        benchmark, and what it measurably changed. Read it, run it, or add your own.</p>
+      <div class="statline caps">
+        <div><b data-count-to={stats.contributions}>0</b><span>contributions</span></div>
+        <div><b data-count-to={stats.replications}>0</b><span>replications</span></div>
+        <div><b data-count-to={stats.teams}>0</b><span>teams verifying</span></div>
+      </div>
+    </section>
+
+    <div class="seclab"><span class="caps" style="color: var(--oxblood)">Verified findings</span></div>
+    <div class="cards">
+      {verified.map((card) => <Card card={card} />)}
+    </div>
+
+    {recent.length > 0 && (
+      <>
+        <div class="seclab"><span class="caps">Recently published</span></div>
+        <div class="cards">
+          {recent.map((card) => <Card card={card} />)}
+        </div>
+      </>
+    )}
+    <Footer />
   </main>
 </Base>
+<style>
+  .hero { padding: 50px 0 42px; border-bottom: 1px solid var(--hairline); }
+  .hero h1 { font-weight: 600; font-size: clamp(30px, 4.2vw, 46px); line-height: 1.12;
+             margin: 14px 0 16px; max-width: 21ch; text-wrap: balance; }
+  .hero h1 em { font-style: italic; font-weight: 500; color: var(--oxblood); }
+  .stand { max-width: 56ch; color: var(--slate); margin: 0 0 22px; font-size: 16.5px; }
+  .statline { display: flex; gap: 26px; flex-wrap: wrap; }
+  .statline b { font-family: var(--font-display); font-weight: 600; font-size: 22px;
+                display: block; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .seclab { display: flex; align-items: center; gap: 14px; margin: 34px 0 0; }
+  .seclab::after { content: ""; flex: 1; border-top: 1px solid var(--hairline); }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--hairline); margin-top: 16px; }
+  .cards > :global(.card:nth-child(odd)) { border-right: 1px solid var(--hairline); }
+  @media (max-width: 720px) {
+    .cards { grid-template-columns: 1fr; }
+    .cards > :global(.card:nth-child(odd)) { border-right: none; }
+  }
+</style>
