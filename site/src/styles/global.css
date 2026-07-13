@@ -167,7 +167,7 @@ html:not(.js) .rv { opacity: 1; transform: none; } /* no JS = fully visible */
 .smsg { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate); padding: 14px 20px; margin: 0; }
 .shit { display: block; padding: 14px 20px; border-bottom: 1px solid var(--hairline);
         text-decoration: none; color: inherit; transition: background .2s; }
-.shit:hover { background: var(--soft); }
+.shit:hover, .shit.sh-active { background: var(--soft); }
 .shit h4 { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; margin: 0 0 3px; }
 .shit h4 mark { background: transparent; color: var(--oxblood);
         border-bottom: 2px solid var(--oxblood); }
