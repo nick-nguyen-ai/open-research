@@ -1,0 +1,25 @@
+---
+import Base from "../../layouts/Base.astro";
+import Masthead from "../../components/Masthead.astro";
+import Footer from "../../components/Footer.astro";
+import BrowseFilter from "../../components/islands/BrowseFilter.jsx";
+import cards from "../../data/cards.json";
+import filters from "../../data/filters.json";
+
+export function getStaticPaths() {
+  return filters.tags.map((t) => ({ params: { tag: t.value } }));
+}
+const { tag } = Astro.params;
+---
+<Base title={`#${tag} · OpenResearch`}>
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="browse" />
+    <h1 class="font-display bh">Tagged <em>#{tag}</em></h1>
+    <BrowseFilter client:load cards={cards} filters={filters} initial={{ tag }} />
+    <Footer />
+  </main>
+</Base>
+<style>
+  .bh { font-weight: 600; font-size: 30px; margin: 36px 0 18px; }
+  .bh em { font-style: italic; font-weight: 500; color: var(--oxblood); }
+</style>

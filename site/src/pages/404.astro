@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+---
+<Base title="Not found · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead />
+    <section class="nf">
+      <p class="caps" style="color: var(--oxblood)">404</p>
+      <h1 class="font-display">This page isn't in the record.</h1>
+      <p>Try <button class="abtn" type="button" data-search-open>⌘K search</button>
+         or head back to <a href="/">the front page</a>.</p>
+    </section>
+    <Footer />
+  </main>
+</Base>
+<style>
+  .nf { padding: 90px 0 60px; }
+  .nf h1 { font-weight: 600; font-size: clamp(28px, 4vw, 42px); margin: 12px 0 16px; }
+  .nf a { color: var(--oxblood); }
+  .nf p { color: var(--slate); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>

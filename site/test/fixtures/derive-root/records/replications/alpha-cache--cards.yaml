@@ -1,0 +1,9 @@
+contribution_id: alpha-cache
+replicator:
+  name: Grace
+  team: Cards
+benchmark_id: suite-a
+method: Re-ran the bundle against the cards eval set end to end.
+outcome: replicated
+measured_delta: cost -48%
+date: 2026-07-11

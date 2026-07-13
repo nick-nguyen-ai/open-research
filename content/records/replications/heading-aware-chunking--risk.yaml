@@ -1,0 +1,9 @@
+contribution_id: heading-aware-chunking
+replicator:
+  name: Rui
+  team: Risk Analytics
+workflow: Risk policy retrieval workflow over 4k documents with in-house eval set.
+method: Applied depth-2 chunking to our own retrieval workflow and compared recall.
+outcome: replicated
+measured_delta: recall@10 +12pt
+date: 2026-07-12

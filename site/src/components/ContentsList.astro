@@ -1,0 +1,16 @@
+---
+const { headings } = Astro.props;
+---
+<p class="contents">
+  <span class="caps" style="color: var(--oxblood)">Contents</span><br />
+  {headings.map((h, i) => (
+    <a href={`#${h.slug}`}><span class="n">{String(i + 1).padStart(2, "0")}</span>{h.text}</a>
+  ))}
+</p>
+<style>
+  .contents { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate);
+              line-height: 2; margin: 0 0 8px; }
+  .contents a { color: var(--slate); text-decoration: none; margin-right: 18px; white-space: nowrap; }
+  .contents a:hover { color: var(--oxblood); }
+  .n { color: var(--oxblood); font-size: 10px; margin-right: 6px; font-variant-numeric: tabular-nums; }
+</style>

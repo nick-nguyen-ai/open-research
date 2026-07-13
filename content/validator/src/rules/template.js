@@ -1,7 +1,7 @@
 export const REQUIRED_HEADINGS = {
   finding: ["Summary", "Context", "Technique", "Evidence", "How to replicate"],
   "technical-report": ["Abstract", "Background", "Method", "Results", "Discussion", "How to replicate"],
-  tutorial: ["What you'll learn", "Prerequisites", "Steps", "Wrap-up"],
+  tutorial: ["You'll need", "You'll build", "Steps", "Wrap-up"],
   note: []
 };
 

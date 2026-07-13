@@ -3,6 +3,8 @@
 This directory is the single source of truth. Everything else — site, arena,
 profiles, digest, search index — is derived from it at build time.
 
+The site in `site/` renders this directory; run `npm run site:build` at the repo root to build it.
+
 ## Layout
 
 | Path | What lives here |

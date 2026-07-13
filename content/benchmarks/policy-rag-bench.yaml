@@ -1,0 +1,10 @@
+id: policy-rag-bench
+owner:
+  name: Marcus
+  team: Group Data
+description: Retrieval benchmark over internal policy documents with gold passages.
+data_pointer: ghe://group-data/policy-rag-bench
+metrics:
+  - name: recall_at_10
+    definition: fraction of gold passages present in top-10 retrieved chunks
+    higher_is_better: true

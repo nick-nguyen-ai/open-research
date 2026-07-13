@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+import Masthead from "./Masthead.astro";
+import Footer from "./Footer.astro";
+const { title, milestone, blurb, active } = Astro.props;
+---
+<Base title={`${title} · OpenResearch`}>
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active={active} />
+    <section class="ph">
+      <p class="caps" style="color: var(--oxblood)">Coming in {milestone}</p>
+      <h1 class="font-display">{title}</h1>
+      <p class="blurb">{blurb}</p>
+      <a class="abtn" href="/browse">Browse the record meanwhile →</a>
+    </section>
+    <Footer />
+  </main>
+</Base>
+<style>
+  .ph { padding: 90px 0 60px; max-width: 56ch; }
+  .ph h1 { font-weight: 600; font-size: clamp(28px, 4vw, 42px); line-height: 1.12;
+           margin: 12px 0 14px; text-wrap: balance; }
+  .blurb { color: var(--slate); margin: 0 0 24px; }
+</style>
