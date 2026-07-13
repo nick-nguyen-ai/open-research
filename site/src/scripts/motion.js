@@ -37,6 +37,7 @@ function animNum(el, to, dur = 900) {
 function initCounts() {
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) {
+      if (en.target.dataset.counted) continue;
       if (!en.isIntersecting) continue;
       en.target.dataset.counted = "1";
       animNum(en.target, Number(en.target.dataset.countTo));

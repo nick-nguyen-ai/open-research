@@ -9,6 +9,7 @@ export default function SearchOverlay() {
   const [indexed, setIndexed] = useState(null);
   const pagefind = useRef(null);
   const inputRef = useRef(null);
+  const listRef = useRef(null);
 
   const ensurePagefind = useCallback(async () => {
     if (pagefind.current || status === "unavailable") return;
@@ -73,7 +74,10 @@ export default function SearchOverlay() {
       } else if (e.key === "Enter") {
         e.preventDefault();
         const hit = results[active];
-        if (hit) window.location.href = hit.url;
+        if (!hit) return;
+        const activeEl = listRef.current?.querySelector("#sh-" + active);
+        if (activeEl) activeEl.click();
+        else window.location.href = hit.url;
       }
     };
     document.addEventListener("keydown", onNav);
@@ -88,19 +92,24 @@ export default function SearchOverlay() {
         <div className="sline">
           <span className="caps" style={{ color: "var(--oxblood)", letterSpacing: ".14em" }}>Search</span>
           <input ref={inputRef} className="sq" value={query} placeholder="Search the corpus…"
+                 role="combobox" aria-expanded={results.length > 0} aria-controls="sh-listbox"
+                 aria-activedescendant={results.length ? "sh-" + active : undefined}
                  onChange={(e) => setQuery(e.target.value)} />
           <button className="kbd" type="button" onClick={() => setOpen(false)}>esc</button>
         </div>
         {status === "unavailable" && (
           <p className="smsg">Search index not built — run <code>npm run build -w site</code> and serve <code>dist/</code>.</p>
         )}
-        {results.map((r, i) => (
-          <a key={r.url} className={i === active ? "shit sh-active" : "shit"} href={r.url}
-             onMouseEnter={() => setActive(i)}>
-            <h4 dangerouslySetInnerHTML={{ __html: r.excerpt }} />
-            <div className="sm">{r.meta?.tier ?? ""} {r.meta?.category ? `· ${r.meta.category}` : ""} {r.meta?.evidence ? `· ${r.meta.evidence}` : ""}</div>
-          </a>
-        ))}
+        <div id="sh-listbox" role="listbox" ref={listRef}>
+          {results.map((r, i) => (
+            <a key={r.url} id={"sh-" + i} role="option" aria-selected={i === active}
+               className={i === active ? "shit sh-active" : "shit"} href={r.url}
+               onMouseEnter={() => setActive(i)}>
+              <h4 dangerouslySetInnerHTML={{ __html: r.excerpt }} />
+              <div className="sm">{r.meta?.tier ?? ""} {r.meta?.category ? `· ${r.meta.category}` : ""} {r.meta?.evidence ? `· ${r.meta.evidence}` : ""}</div>
+            </a>
+          ))}
+        </div>
         <div className="sfoot">
           <span>↵ open</span><span>esc close</span>
           {indexed != null && <span style={{ marginLeft: "auto" }}>{indexed} documents indexed at build</span>}

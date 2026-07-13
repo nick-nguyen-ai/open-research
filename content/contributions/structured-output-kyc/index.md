@@ -11,6 +11,7 @@ status: published
 created: 2026-07-03
 updated: 2026-07-11
 replication_bundle: bundle/
+benchmarks: [internal-eval-suite]
 result: −83% parse failures
 result_detail: 4.1% → 0.7% failure rate over 12k documents
 ---
