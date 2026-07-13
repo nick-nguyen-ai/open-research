@@ -1,5 +1,80 @@
 ---
-import Placeholder from "../components/Placeholder.astro";
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import toolkit from "../data/toolkit.json";
+
+const shipped = toolkit.skills.filter((s) => !s.shipsIn);
+const upcoming = toolkit.skills.filter((s) => s.shipsIn);
 ---
-<Placeholder title="Toolkit" milestone="M3" active="toolkit"
-  blurb="One-command install for the Claude Code toolkit: publish a braindump as a formatted contribution, read papers in the context of your own pipeline, and open replication PRs without leaving your editor." />
+<Base title="Toolkit · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="toolkit" />
+
+    <section class="rv" style="padding: 40px 0 8px; max-width: 60ch;">
+      <p class="caps" style="color: var(--oxblood)">Toolkit v{toolkit.version}</p>
+      <h1 class="font-display" style="font-weight: 600; font-size: clamp(28px,4vw,40px); line-height: 1.12; margin: 10px 0 12px; text-wrap: balance;">
+        Publish, read, and judge from inside <em>Claude Code.</em>
+      </h1>
+      <p style="color: var(--slate); margin: 0;">{toolkit.description}</p>
+    </section>
+
+    <article class="card rv" style="cursor: default; border: 1px solid var(--hairline); border-radius: 6px; margin: 20px 0 8px;">
+      <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+        <span class="caps" style="color: var(--oxblood)">Plugin</span>
+        <h3 style="margin: 0;">{toolkit.name}</h3>
+        <span class="stamp">v{toolkit.version}</span>
+      </div>
+      <p class="card-summary" style="margin: 10px 0 0;">{toolkit.description}</p>
+      <p class="caps" style="margin: 12px 0 0;">source · {toolkit.source}</p>
+    </article>
+
+    <div class="seclab rv"><span class="caps" style="color: var(--oxblood)">Skills</span></div>
+    <div class="skills rv">
+      {shipped.map((s) => (
+        <div class="skill">
+          <div class="skill-name font-display">{s.name}</div>
+          <div class="skill-purpose">{s.purpose}</div>
+          <span class="seal skill-tag">ready</span>
+        </div>
+      ))}
+      {upcoming.map((s) => (
+        <div class="skill skill-upcoming">
+          <div class="skill-name font-display">{s.name}</div>
+          <div class="skill-purpose">{s.purpose}</div>
+          <span class="stamp skill-tag">ships in {s.shipsIn}</span>
+        </div>
+      ))}
+    </div>
+
+    <section class="install rv">
+      <p class="caps" style="color: var(--oxblood)">Install</p>
+      <div class="cmd">
+        <code class="kbd" id="cmd-init">{toolkit.install.init}</code>
+        <button class="abtn" type="button" data-copy="#cmd-init">Copy</button>
+      </div>
+      <p class="cmd-or caps">or add the marketplace by hand</p>
+      <div class="cmd">
+        <code class="kbd" id="cmd-mkt">{toolkit.install.marketplaceAdd}</code>
+        <button class="abtn" type="button" data-copy="#cmd-mkt">Copy</button>
+      </div>
+    </section>
+
+    <Footer />
+  </main>
+</Base>
+<style>
+  .seclab { margin: 30px 0 6px; }
+  .skills { display: flex; flex-direction: column; border-top: 1px solid var(--hairline); }
+  .skill { display: grid; grid-template-columns: 160px 1fr auto; gap: 16px; align-items: center;
+           padding: 16px 4px; border-bottom: 1px solid var(--hairline); }
+  .skill-name { font-weight: 600; font-size: 17px; }
+  .skill-purpose { color: var(--slate); font-size: 14.5px; }
+  .skill-upcoming .skill-name, .skill-upcoming .skill-purpose { opacity: .62; }
+  .skill-tag { justify-self: end; }
+  .install { margin: 34px 0 8px; }
+  .cmd { display: flex; align-items: center; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
+  .cmd .kbd { font-size: 13px; padding: 7px 12px; }
+  .cmd-or { margin: 14px 0 2px; }
+  @media (max-width: 640px) { .skill { grid-template-columns: 1fr; gap: 4px; } .skill-tag { justify-self: start; } }
+</style>
