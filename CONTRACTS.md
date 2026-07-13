@@ -29,7 +29,7 @@ Registry maintained per [`docs/superpowers/plans/2026-07-14-m2-m8-master-plan.md
 | Marketplace shape | `toolkit/marketplace.json` | `{ name, owner{name,url}, plugins:[{ name, source, description, skills:[{name,purpose,shipsIn}] }] }`; `shipsIn: null` = shipped, `"M<N>"` = upcoming |
 | Plugin manifest | `toolkit/plugins/openresearch/.claude-plugin/plugin.json` | `{ name, version, description, author }`; `version` is the installer's pinning anchor (0.3.0) |
 | Skill CLI names | `toolkit/plugins/openresearch/skills/` | `judge`, `paper-reader`, `publish` (SKILL.md instruction docs; advisory `judge` never blocks) |
-| Installer commands | `toolkit/installer/bin/openresearch.mjs` | `openresearch init` / `update [--version <semver>]` / `doctor`, all with `--dry-run`; bin name `openresearch` |
+| Installer commands | `toolkit/installer/bin/openresearch.mjs` | `openresearch init` / `update [--version <semver>]` / `doctor`; `init` and `update` support `--dry-run` (print the exact command plan), `doctor` is read-only and ignores the flag; bin name `openresearch` |
 | Toolkit derive output | `site/scripts/derive.mjs` → `site/src/data/toolkit.json` | `{ name, version, description, source, skills:[{name,purpose,shipsIn}], install:{init, marketplaceAdd} }` (additive; existing derive outputs unchanged) |
 | No-remote fallback | `publish` skill + installer | When `platform.config.json.repo` is null, flows print exact push/PR commands instead of calling `gh` |
 

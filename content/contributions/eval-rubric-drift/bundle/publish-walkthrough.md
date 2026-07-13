@@ -2,7 +2,7 @@
 
 Contribution: `eval-rubric-drift`. Executed the `publish` skill's non-interactive,
 no-remote path (validate -> branch -> commit -> printed fallback). Proof for CP-B that
-the flow works end to end on a machine with no git remote.
+the no-remote publish flow works end to end on a machine with no git remote.
 
 ## Scope
 

@@ -9,8 +9,9 @@ const contentRoot = fileURLToPath(new URL("../../content", import.meta.url));
 
 test("record has reached 10 published contributions", () => {
   const { stats, cards } = derive(contentRoot, { rev: () => "test" });
-  assert.equal(stats.contributions, 10);
-  assert.equal(cards.length, 10);
+  // CP-B floor: the soft-launch content bar is >=10 published contributions; later cycles add more.
+  assert.ok(stats.contributions >= 10, `expected >=10 contributions, got ${stats.contributions}`);
+  assert.ok(cards.length >= 10, `expected >=10 cards, got ${cards.length}`);
 });
 
 test("author team + division spread: >=4 teams across >=3 divisions", () => {
