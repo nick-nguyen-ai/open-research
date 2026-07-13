@@ -19,11 +19,13 @@ export function tokenize(text) {
 export function buildIndex(corpus) {
   const chunks = [];
   const docs = [];      // parallel to chunks: { tf: { term: count } }
-  const df = {};        // term -> number of chunks containing it
+  // Term-keyed maps are prototype-less: a token like "constructor" must not
+  // resolve through Object.prototype and corrupt its count.
+  const df = Object.create(null);  // term -> number of chunks containing it
   let totalTokens = 0;
   for (const c of corpus) {
     const terms = tokenize(c.text);
-    const tf = {};
+    const tf = Object.create(null);
     for (const t of terms) tf[t] = (tf[t] ?? 0) + 1;
     for (const t of Object.keys(tf)) df[t] = (df[t] ?? 0) + 1;
     chunks.push({ id: c.id, slug: c.slug, tier: c.tier, section: c.section, text: c.text, tokens: terms.length });
@@ -45,9 +47,11 @@ export function search(index, query, k = 5) {
     const len = chunks[i].tokens;
     let score = 0;
     for (const t of qterms) {
-      const f = tf[t];
+      // Own-property guards keep lookups safe even if the serializable index
+      // was JSON round-tripped (which restores Object.prototype on the maps).
+      const f = Object.hasOwn(tf, t) ? tf[t] : 0;
       if (!f) continue;
-      const n = df[t] ?? 0;
+      const n = Object.hasOwn(df, t) ? df[t] : 0;
       const idf = Math.log(1 + (N - n + 0.5) / (n + 0.5));
       score += idf * (f * (K1 + 1)) / (f + K1 * (1 - B + B * (len / (avgdl || 1))));
     }

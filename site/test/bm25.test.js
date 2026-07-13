@@ -46,6 +46,18 @@ test("search returns [] when no query term matches any chunk", () => {
   assert.deepEqual(search(index, "zzz nonexistent quux", 5), []);
 });
 
+test("prototype-named tokens (e.g. 'constructor') index and score correctly", () => {
+  const idx = buildIndex([
+    ...corpus,
+    { id: "proto#summary", slug: "proto", tier: "finding", section: "Summary",
+      text: "Override the constructor to inject the tokenizer into the class" }
+  ]);
+  const hits = search(idx, "constructor", 5);
+  assert.equal(hits.length, 1);
+  assert.equal(hits[0].slug, "proto");
+  assert.ok(Number.isFinite(hits[0].score) && hits[0].score > 0);
+});
+
 test("results carry only the frozen keys", () => {
   const index = buildIndex(corpus);
   const [hit] = search(index, "reranker", 1);
