@@ -1,0 +1,8 @@
+id: self-rag
+title: "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"
+source_url: https://arxiv.org/abs/2310.11511
+venue: ICLR 2024
+added_by:
+  name: Marcus
+  team: Group Data
+status: watching

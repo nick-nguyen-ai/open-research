@@ -368,6 +368,30 @@ export function deriveArena(content, { now = () => new Date() } = {}) {
   };
 }
 
+// ---- Watchlist (Cycle 4, CP-D). Additive derive output. ----
+const WATCH_RANK = { tested: 0, claimed: 1, watching: 2 };
+
+export function deriveWatchlist(content) {
+  const byId = new Map(content.contributions.map((c) => [c.frontmatter.id, c]));
+  const person = (p) => (p ? { name: p.name, team: p.team } : null);
+  const rows = content.watchlist.map((w) => {
+    const d = w.data;
+    const rc = d.resulting_contribution ? byId.get(d.resulting_contribution) : null;
+    return {
+      id: d.id,
+      title: d.title,
+      source_url: d.source_url,
+      venue: d.venue ?? null,
+      added_by: person(d.added_by),
+      status: d.status,
+      claimed_by: person(d.claimed_by),
+      resulting_contribution: rc ? { slug: rc.dirName, title: rc.frontmatter.title } : null
+    };
+  });
+  rows.sort((a, b) => (WATCH_RANK[a.status] - WATCH_RANK[b.status]) || a.title.localeCompare(b.title));
+  return rows;
+}
+
 // CLI: node scripts/derive.mjs [contentRoot] [outDir]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const contentRoot = process.argv[2] ?? fileURLToPath(new URL("../../content", import.meta.url));
@@ -388,6 +412,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     writeFileSync(join(outDir, "arena.json"), JSON.stringify(arena, null, 2));
     const people = derivePeople(arenaContent);
     writeFileSync(join(outDir, "people.json"), JSON.stringify(people, null, 2));
+    writeFileSync(join(outDir, "watchlist.json"), JSON.stringify(deriveWatchlist(arenaContent), null, 2));
     console.log(`derive: ${stats.contributions} contributions → ${outDir}`);
   } catch (err) {
     console.error(err.message);

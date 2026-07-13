@@ -1,0 +1,14 @@
+id: listwise-llm-reranking
+title: "Zero-Shot Listwise Document Reranking with a Large Language Model"
+source_url: https://arxiv.org/abs/2305.02156
+venue: arXiv 2023
+added_by:
+  name: Sofia Marchetti
+  team: markets-analytics
+  division: Markets
+status: tested
+claimed_by:
+  name: Sofia Marchetti
+  team: markets-analytics
+  division: Markets
+resulting_contribution: retrieval-reranker-lite

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Watchlist entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "source_url", "added_by", "status"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "source_url": { "type": "string", "format": "uri" },
+    "venue": { "type": "string", "minLength": 1 },
+    "added_by": { "$ref": "#/definitions/person" },
+    "status": { "enum": ["watching", "claimed", "tested"] },
+    "claimed_by": { "$ref": "#/definitions/person" },
+    "resulting_contribution": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+  },
+  "definitions": {
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "team"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "team": { "type": "string", "minLength": 1 },
+        "division": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+---
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import watchlist from "../data/watchlist.json";
+
+const STATUS = {
+  watching: { label: "Watching", cls: "stamp" },
+  claimed: { label: "Claimed", cls: "stamp claimed" },
+  tested: { label: "Tested", cls: "seal" }
+};
+---
+<Base title="Watchlist · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead />
+    <section class="rv" style="padding: 40px 0 8px; max-width: 64ch;">
+      <p class="caps" style="color: var(--oxblood)">Watchlist</p>
+      <h1 class="font-display" style="font-weight: 600; font-size: clamp(28px,4vw,40px); line-height: 1.12; margin: 10px 0 12px; text-wrap: balance;">
+        External papers we're tracking toward a contribution.
+      </h1>
+      <p style="color: var(--slate); margin: 0;">
+        Claim a paper by opening a PR that flips its <code>status</code> to <code>claimed</code> and sets
+        <code>claimed_by</code>. When your run produces a contribution, set <code>resulting_contribution</code> and mark it
+        <code>tested</code>. Entries live in <code>content/watchlist/</code>. See the <a href="/benchmarks">benchmark registry</a>.
+      </p>
+    </section>
+
+    <div class="wl rv">
+      <div class="row head"><span>Paper</span><span>Added by</span><span>Status</span><span>Outcome</span></div>
+      {watchlist.map((w) => (
+        <div class="row">
+          <span class="paper">
+            <a href={w.source_url} rel="noreferrer">{w.title}</a>
+            {w.venue && <span class="venue">{w.venue}</span>}
+          </span>
+          <span class="who">{w.added_by ? `${w.added_by.name} · ${w.added_by.team}` : "—"}</span>
+          <span><span class={STATUS[w.status]?.cls ?? "stamp"}>{STATUS[w.status]?.label ?? w.status}</span></span>
+          <span class="outcome">
+            {w.resulting_contribution
+              ? <a href={`/contributions/${w.resulting_contribution.slug}`}>{w.resulting_contribution.title}</a>
+              : (w.claimed_by ? `claimed · ${w.claimed_by.team}` : "—")}
+          </span>
+        </div>
+      ))}
+    </div>
+
+    <Footer />
+  </main>
+</Base>
+<style>
+  .wl { margin: 24px 0 8px; }
+  .row { display: grid; grid-template-columns: 2.4fr 1.3fr auto 1.4fr; gap: 16px; align-items: baseline;
+         padding: 13px 6px; border-bottom: 1px solid var(--hairline); }
+  .row.head { font-family: system-ui, sans-serif; font-size: 10.5px; letter-spacing: .16em;
+              text-transform: uppercase; color: var(--slate); border-bottom: 2px solid var(--ink); }
+  .paper a { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--hairline); }
+  .paper a:hover { border-color: var(--oxblood); }
+  .venue { display: block; font-family: system-ui, sans-serif; font-size: 11px; color: var(--slate); margin-top: 3px; }
+  .who, .outcome { color: var(--slate); font-size: 13px; }
+  .outcome a { color: var(--oxblood); text-decoration: none; }
+  .stamp.claimed { color: var(--oxblood); }
+  @media (max-width: 680px) {
+    .row { grid-template-columns: 1fr auto; }
+    .row .who, .row .outcome, .row.head span:nth-child(2), .row.head span:nth-child(4) { display: none; }
+  }
+</style>

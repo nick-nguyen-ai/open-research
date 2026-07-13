@@ -1,0 +1,16 @@
+# Watchlist entry — an external paper the team is tracking toward a contribution.
+# Place at: content/watchlist/<id>.yaml
+# The validator checks: schema (this shape) + crossref (resulting_contribution must resolve when present).
+
+id: some-paper-id                       # required — kebab-case
+title: The paper's title                # required
+source_url: https://arxiv.org/abs/0000.00000   # required — a URL
+venue: NeurIPS 2025                     # optional
+added_by:                               # required — who put it on the watchlist
+  name: Full Name
+  team: your-team
+status: watching                        # required — watching | claimed | tested
+claimed_by:                             # optional — set when status is claimed/tested
+  name: Full Name
+  team: your-team
+resulting_contribution: some-contribution-id   # optional — set when a contribution came out of it (must resolve)
