@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import SearchOverlay from "../components/islands/SearchOverlay.jsx";
 import "../styles/global.css";
 const { title = "OpenResearch", description = "The internal record of applied AI research." } = Astro.props;
 ---
@@ -21,6 +22,7 @@ const { title = "OpenResearch", description = "The internal record of applied AI
   </head>
   <body class="bg-paper text-ink font-prose">
     <slot />
+    <SearchOverlay client:idle />
     <script>
       import "../scripts/motion.js";
     </script>
