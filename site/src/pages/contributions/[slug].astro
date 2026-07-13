@@ -8,6 +8,7 @@ import ResultBand from "../../components/ResultBand.astro";
 import CitationBlock from "../../components/CitationBlock.astro";
 import ContentsList from "../../components/ContentsList.astro";
 import Rail from "../../components/Rail.astro";
+import Changelog from "../../components/Changelog.astro";
 import evidence from "../../data/evidence.json";
 import { fmtDate, readTime, tierLabel } from "../../lib/format.mjs";
 
@@ -22,7 +23,8 @@ const fm = entry.data;
 const tier = fm.tier;
 const { Content, headings } = await render(entry);
 const h2s = headings.filter((h) => h.depth === 2);
-const ev = evidence[slug] ?? { replications: [], endorsements: [], rev: null };
+const ev = evidence[slug] ?? { replications: [], endorsements: [], adoptions: [], changelog: [], rev: null };
+const adoptions = ev.adoptions ?? [];
 const isNote = tier === "note";
 const showBand = Boolean(fm.result) && (tier === "finding" || tier === "technical-report");
 const verified = ev.replications.filter((r) => r.outcome === "replicated").length;
@@ -47,15 +49,19 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
         <div class="article-body">
           <Content />
         </div>
+        <Changelog items={ev.changelog ?? []} />
         {!isNote && <CitationBlock fm={fm} slug={slug} rev={ev.rev} />}
         {isNote && (
           <div class="notebar">
-            <span>{verified} replication{verified === 1 ? "" : "s"} yet</span>
+            <span>
+              {verified} replication{verified === 1 ? "" : "s"}
+              {adoptions.length > 0 ? ` · ${adoptions.length} adoption${adoptions.length === 1 ? "" : "s"}` : ""}
+            </span>
             <a href="/contribute">Tried it? Add evidence →</a>
           </div>
         )}
       </article>
-      {!isNote && <Rail headings={h2s} replications={ev.replications} endorsements={ev.endorsements} />}
+      {!isNote && <Rail headings={h2s} replications={ev.replications} endorsements={ev.endorsements} adoptions={adoptions} />}
     </div>
     <Footer />
   </main>
