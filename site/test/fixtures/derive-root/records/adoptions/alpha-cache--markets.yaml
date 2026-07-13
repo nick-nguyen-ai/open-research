@@ -1,0 +1,10 @@
+contribution_id: alpha-cache
+adopter:
+  name: Sofia Marchetti
+  team: markets-analytics
+  division: Markets
+pipeline: markets-nightly-evals
+status: active
+since: 2026-07-08
+impact: eval spend down 58% month over month
+date: 2026-07-13

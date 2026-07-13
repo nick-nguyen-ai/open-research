@@ -14,6 +14,25 @@ function gitRev(file) {
   }
 }
 
+// Last 5 non-merge commits touching a directory: {rev, date, subject}. Empty when
+// git history is unavailable (tarball / shallow clone) — same graceful degradation as gitRev.
+// The \x1f (unit separator) delimiter cannot appear in commit subjects, so parsing is safe.
+function gitLog(dir) {
+  try {
+    const out = execFileSync(
+      "git",
+      ["log", "-n", "5", "--no-merges", "--date=short", "--format=%h%x1f%ad%x1f%s", "--", dir],
+      { encoding: "utf8" }
+    );
+    return out.split("\n").filter(Boolean).map((line) => {
+      const [rev, date, subject] = line.split("\x1f");
+      return { rev, date, subject };
+    });
+  } catch {
+    return [];
+  }
+}
+
 function sectionText(body, heading) {
   const lines = body.split("\n");
   const start = lines.findIndex((l) => l.trim() === `## ${heading}`);
@@ -40,7 +59,7 @@ function countSorted(values) {
     .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
 }
 
-export function derive(contentRoot, { rev = gitRev } = {}) {
+export function derive(contentRoot, { rev = gitRev, log = gitLog } = {}) {
   const content = loadContent(contentRoot);
   if (content.errors.length > 0) {
     const lines = content.errors.map((e) => `${e.file} · ${e.rule} · ${e.message}`);
@@ -50,6 +69,7 @@ export function derive(contentRoot, { rev = gitRev } = {}) {
   const published = content.contributions.filter((c) => c.frontmatter.status === "published");
   const reps = content.replications.map((r) => r.data);
   const endos = content.endorsements.map((e) => e.data);
+  const adopts = content.adoptions.map((a) => a.data);
 
   const cards = published.map((c) => {
     const fm = c.frontmatter;
@@ -102,6 +122,15 @@ export function derive(contentRoot, { rev = gitRev } = {}) {
         by: `${e.by.name} · ${e.by.team}`,
         date: e.date
       })),
+      adoptions: adopts.filter((a) => a.contribution_id === id).map((a) => ({
+        team: a.adopter.team,
+        pipeline: a.pipeline,
+        status: a.status,
+        impact: a.impact ?? null,
+        since: a.since,
+        date: a.date
+      })),
+      changelog: log(c.dir),
       rev: rev(c.file)
     };
   }
