@@ -13,8 +13,8 @@
         { "name": "judge", "purpose": "Advisory review of a draft on clarity, claims-vs-evidence, and reproducibility.", "shipsIn": null },
         { "name": "paper-reader", "purpose": "Structured read of one contribution and its evidence, ending in next actions.", "shipsIn": null },
         { "name": "publish", "purpose": "Take a draft from folder to validated, judged, branch-and-PR (or no-remote fallback).", "shipsIn": null },
-        { "name": "try-this-paper", "purpose": "Run a contribution's bundle against your own workflow and capture the delta.", "shipsIn": "M7" },
-        { "name": "write-replication", "purpose": "Turn a replication run into a submitted replication record.", "shipsIn": "M7" }
+        { "name": "try-this-paper", "purpose": "Run a contribution's bundle against your own workflow and capture the delta.", "shipsIn": null },
+        { "name": "write-replication", "purpose": "Turn a replication run into a submitted replication record.", "shipsIn": null }
       ]
     }
   ]

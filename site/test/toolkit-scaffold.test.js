@@ -15,17 +15,17 @@ test("marketplace.json parses and the plugin source path exists on disk", () => 
   assert.ok(existsSync(toolkit(`${entry.source}/.claude-plugin/plugin.json`)));
 });
 
-test("plugin.json pins version 0.3.0 (the installer's pinning anchor)", () => {
+test("plugin.json pins version 0.4.0 (the installer's pinning anchor)", () => {
   const pl = JSON.parse(readFileSync(toolkit("plugins/openresearch/.claude-plugin/plugin.json"), "utf8"));
   assert.equal(pl.name, "openresearch");
-  assert.equal(pl.version, "0.3.0");
+  assert.equal(pl.version, "0.4.0");
 });
 
-test("marketplace skills roster: three M3 skills shipped, two M7 upcoming", () => {
+test("marketplace skills roster: all five skills shipped, none upcoming", () => {
   const mk = JSON.parse(readFileSync(toolkit("marketplace.json"), "utf8"));
   const skills = mk.plugins.find((p) => p.name === "openresearch").skills;
   const shipped = skills.filter((s) => !s.shipsIn).map((s) => s.name).sort();
-  const upcoming = skills.filter((s) => s.shipsIn === "M7").map((s) => s.name).sort();
-  assert.deepEqual(shipped, ["judge", "paper-reader", "publish"]);
-  assert.deepEqual(upcoming, ["try-this-paper", "write-replication"]);
+  const upcoming = skills.filter((s) => s.shipsIn).map((s) => s.name).sort();
+  assert.deepEqual(shipped, ["judge", "paper-reader", "publish", "try-this-paper", "write-replication"]);
+  assert.deepEqual(upcoming, []);
 });

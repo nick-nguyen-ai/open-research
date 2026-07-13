@@ -1,6 +1,6 @@
 {
   "name": "openresearch",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "OpenResearch contributor toolkit — publish, read, and judge applied-AI research from inside Claude Code.",
   "author": { "name": "OpenResearch" }
 }

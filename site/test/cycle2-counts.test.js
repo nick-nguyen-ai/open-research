@@ -34,10 +34,10 @@ test("toolkit.json shape matches plugin.json version and skill roster", () => {
   const plugin = JSON.parse(readFileSync(fileURLToPath(new URL("../../toolkit/plugins/openresearch/.claude-plugin/plugin.json", import.meta.url)), "utf8"));
   assert.equal(toolkit.name, "openresearch");
   assert.equal(toolkit.version, plugin.version);
-  assert.equal(toolkit.version, "0.3.0");
+  assert.equal(toolkit.version, "0.4.0");
   assert.equal(toolkit.skills.length, 5);
-  assert.equal(toolkit.skills.filter((s) => !s.shipsIn).length, 3);
-  assert.equal(toolkit.skills.filter((s) => s.shipsIn === "M7").length, 2);
+  assert.equal(toolkit.skills.filter((s) => !s.shipsIn).length, 5);
+  assert.equal(toolkit.skills.filter((s) => s.shipsIn === "M7").length, 0);
   assert.equal(toolkit.install.init, "npx openresearch init");
   assert.equal(toolkit.install.marketplaceAdd, "claude plugin marketplace add ./toolkit");
 });
