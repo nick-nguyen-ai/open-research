@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Newsreader"; font-style: normal; font-weight: 600;
+  font-display: swap; src: url("/fonts/newsreader-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader"; font-style: italic; font-weight: 500;
+  font-display: swap; src: url("/fonts/newsreader-italic-500.woff2") format("woff2");
+}
+
+/* ---- Imprint tokens (light default, designed dark inversion) ---- */
+:root {
+  --paper: #FBFAF7; --ink: #1E2A38; --oxblood: #7A2E3A;
+  --slate: #5B6470; --hairline: #DFDBD2; --soft: #F5F3EC;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151A21; --ink: #E8E4DB; --oxblood: #C25B69;
+    --slate: #98A0AB; --hairline: #2C333E; --soft: #1B222B;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151A21; --ink: #E8E4DB; --oxblood: #C25B69;
+  --slate: #98A0AB; --hairline: #2C333E; --soft: #1B222B;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-oxblood: var(--oxblood);
+  --color-slate: var(--slate);
+  --color-hairline: var(--hairline);
+  --color-soft: var(--soft);
+  --font-display: "Newsreader", Georgia, serif;
+  --font-prose: Charter, Georgia, "Times New Roman", serif;
+}
+
+/* ---- base ---- */
+html { background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-prose); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+
+/* ---- shared Imprint classes (used by .astro AND .jsx — keep global) ---- */
+.caps {
+  font-family: system-ui, "Segoe UI", sans-serif; font-size: 11px;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--slate); font-weight: 600;
+}
+.kbd {
+  font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--slate);
+  border: 1px solid var(--hairline); border-radius: 4px; padding: 2px 7px; background: var(--soft);
+}
+.abtn {
+  font-family: system-ui, sans-serif; font-size: 12.5px; letter-spacing: .03em;
+  color: var(--slate); border: 1px solid var(--hairline); border-radius: 999px;
+  padding: 5px 14px; background: transparent; cursor: pointer; text-decoration: none;
+  display: inline-flex; gap: 7px; align-items: center; transition: color .25s, border-color .25s;
+}
+.abtn:hover, .abtn:focus-visible { border-color: var(--oxblood); color: var(--oxblood); outline: none; }
+.fchip {
+  font-family: system-ui, sans-serif; font-size: 12.5px; letter-spacing: .04em;
+  color: var(--slate); border: 1px solid var(--hairline); border-radius: 999px;
+  padding: 5px 14px; cursor: pointer; background: transparent; transition: all .25s;
+}
+.fchip:hover { border-color: var(--oxblood); color: var(--oxblood); }
+.fchip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.card { display: block; padding: 22px 26px 24px; border-bottom: 1px solid var(--hairline); cursor: pointer; transition: background .3s; text-decoration: none; color: inherit; }
+.card:hover { background: var(--soft); }
+.card h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; line-height: 1.25; margin: 8px 0; text-wrap: balance; transition: color .25s; }
+.card:hover h3 { color: var(--oxblood); }
+.card .card-summary { margin: 0 0 14px; color: var(--slate); font-size: 14.5px; }
+.card .card-ev { font-family: system-ui, sans-serif; font-size: 12px; color: var(--slate); display: flex; gap: 14px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.card .card-ev b { color: var(--ink); font-weight: 600; }
+
+.stamp {
+  font-family: system-ui, sans-serif; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--oxblood); border: 1.5px solid var(--oxblood); border-radius: 3px;
+  padding: 1px 6px; font-weight: 600; display: inline-block; transform: rotate(-2deg);
+}
+.seal {
+  display: inline-flex; align-items: center; gap: 8px; font-family: system-ui, sans-serif;
+  font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--oxblood);
+  border: 1.5px solid var(--oxblood); border-radius: 3px; padding: 6px 12px; font-weight: 600;
+}
+
+/* ---- motion primitives ---- */
+.rv { opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2,.6,.2,1), transform .7s cubic-bezier(.2,.6,.2,1); }
+.rv.on { opacity: 1; transform: none; }
+html:not(.js) .rv { opacity: 1; transform: none; } /* no JS = fully visible */
+@keyframes stampin { 0% { opacity: 0; transform: rotate(-2deg) scale(1.6); } 70% { opacity: 1; transform: rotate(-2deg) scale(.94); } 100% { opacity: 1; transform: rotate(-2deg) scale(1); } }
+.rv.on .stamp { animation: stampin .45s cubic-bezier(.2,.7,.3,1.1) both; animation-delay: .35s; }
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; }
+}

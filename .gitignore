@@ -4,3 +4,7 @@ dist/
 
 # SDD subagent-driven-development scratch (ledger, briefs, reports, diffs)
 .superpowers/
+
+site/dist/
+site/.astro/
+site/src/data/

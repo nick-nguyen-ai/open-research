@@ -3,9 +3,12 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=20" },
-  "workspaces": ["content/validator"],
+  "workspaces": ["content/validator", "site"],
   "scripts": {
     "validate": "node content/validator/bin/validate.js",
-    "test": "npm test --workspaces"
+    "test": "npm test --workspaces",
+    "derive": "node site/scripts/derive.mjs",
+    "site:dev": "npm run dev -w site",
+    "site:build": "npm run build -w site"
   }
 }

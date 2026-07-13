@@ -1,0 +1,28 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "../styles/global.css";
+const { title = "OpenResearch", description = "The internal record of applied AI research." } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      (function () {
+        var t = localStorage.getItem("theme");
+        if (t) document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body class="bg-paper text-ink font-prose">
+    <slot />
+    <script>
+      import "../scripts/motion.js";
+    </script>
+  </body>
+</html>
