@@ -109,7 +109,10 @@ const rankClass = (i) => (i < 3 ? "rank top" : "rank");
   #tab-individuals:checked ~ .board[data-board="individuals"],
   #tab-teams:checked ~ .board[data-board="teams"],
   #tab-divisions:checked ~ .board[data-board="divisions"] { display: block; }
-  .tablab:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 2px; }
+  .tablab:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 2px; } /* inert: labels aren't focusable, radio is visually hidden — kept as documentation of intent */
+  #tab-individuals:focus-visible ~ label[for="tab-individuals"],
+  #tab-teams:focus-visible ~ label[for="tab-teams"],
+  #tab-divisions:focus-visible ~ label[for="tab-divisions"] { outline: 2px solid var(--oxblood); outline-offset: 2px; }
 
   .row { display: grid; grid-template-columns: 44px 1.4fr 1.6fr auto; gap: 14px; align-items: baseline;
          padding: 11px 6px; border-bottom: 1px solid var(--hairline); text-decoration: none; color: inherit; }
