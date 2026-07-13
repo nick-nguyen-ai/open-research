@@ -340,7 +340,10 @@ Create `content/schemas/replication.schema.json`:
   "type": "object",
   "additionalProperties": false,
   "required": ["contribution_id", "replicator", "method", "outcome", "date"],
-  "anyOf": [{ "required": ["benchmark_id"] }, { "required": ["workflow"] }],
+  "anyOf": [
+    { "required": ["benchmark_id"], "properties": { "benchmark_id": {} } },
+    { "required": ["workflow"], "properties": { "workflow": {} } }
+  ],
   "properties": {
     "contribution_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
     "replicator": { "$ref": "#/definitions/person" },
