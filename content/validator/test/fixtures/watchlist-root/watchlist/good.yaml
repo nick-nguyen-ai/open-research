@@ -1,0 +1,12 @@
+id: some-paper
+title: A watched paper that produced a contribution
+source_url: https://arxiv.org/abs/2305.02156
+venue: EMNLP 2023
+added_by:
+  name: Demo Author
+  team: demo-team
+status: tested
+claimed_by:
+  name: Demo Author
+  team: demo-team
+resulting_contribution: reranker-demo

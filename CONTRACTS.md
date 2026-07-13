@@ -44,6 +44,21 @@ Registry maintained per [`docs/superpowers/plans/2026-07-14-m2-m8-master-plan.md
 | `arena.json` shape | `site/scripts/derive.mjs` → `site/src/data/arena.json` | `{ individuals:[{handle,name,team,division,score,breakdown{authored,replicationsReceived,replicationsPerformed,adoptions,endorsements}}], teams:[{team,division,score,members}], divisions:[{division,score,teams}], generated }`; null-division teams excluded from divisions |
 | `/people/<handle>` route + profile shape | `site/src/pages/people/[handle].astro` → `site/src/data/people.json` | Keyed by `handle` (= lowercase-hyphenated name); `{handle,name,team,division,rank,score,breakdown,contributions[],replicationsPerformed[],received[]}`; generated for every scored person |
 
+## Frozen at CP-D (M7 + M8, 2026-07-14)
+
+| Contract | Definition lives at | Notes |
+|---|---|---|
+| Corpus index artifact | `site/scripts/build-index.mjs` → `site/public/qa-index.json` | `{ chunks:[{id,slug,tier,section,text,tokens}], model:{df,avgdl,docs,N} }`; one Summary chunk per published contribution + one per H2 section; published raw with the site |
+| BM25 search seam | `site/src/lib/bm25.mjs` | `buildIndex(corpus)` + `search(index, query, k)` (pure, zero-dep); CBA swaps Bedrock embeddings behind the same `search(index, query, k)` signature |
+| Q&A MCP tools | `toolkit/plugins/openresearch/mcp/server.mjs` | stdio JSON-RPC 2.0 (initialize / notifications/initialized / tools/list / tools/call, newline-delimited). Tools: `openresearch_search {query, k?}` → `{content,structuredContent{query,results[]}}`; `openresearch_answer {question}` → `{content,structuredContent{question,chunks[],citations[]}}`. Server never calls an LLM |
+| Watchlist YAML shape | `content/schemas/watchlist.schema.json` | `{ id, title, source_url, venue?, added_by{person}, status(watching\|claimed\|tested), claimed_by{person}?, resulting_contribution? }`; crossref: `resulting_contribution` resolves when present |
+| Loader watchlist array | `@openresearch/validator/load` → `loadContent(root)` | Return object gains `watchlist:[{file,data}]` (additive); existing keys unchanged |
+| `watchlist.json` shape | `site/scripts/derive.mjs` → `site/src/data/watchlist.json` | `[{ id, title, source_url, venue, added_by{name,team}, status, claimed_by{name,team}\|null, resulting_contribution{slug,title}\|null }]`; sorted tested<claimed<watching then title |
+| `benchmarks.json` shape | `site/scripts/derive.mjs` → `site/src/data/benchmarks.json` | `[{ id, owner{name,team}, description, data_pointer, metrics[{name,definition,higher_is_better}], contributions[{slug,title}], replications[{slug,team,outcome,delta,date}] }]` (published-only joins) |
+| `digest.json` shape + location | `site/scripts/build-digest.mjs` → `site/src/data/digest.json` | `{ anchor, window{start,end}, contributions[], replications[], adoptions[], movers[{handle,name,points}], generated }`; 7-day window anchored to the latest content date (port-stable) |
+| Discussions config key | `platform.config.json` `discussions.enabled` | Additive key (default false); `config.discussionsEnabled` gates `Discussions.astro`; no external requests when off. Plugin `plugin.json` version anchor is now `0.4.0` |
+| Routes | `site/src/pages/` | Adds `/watchlist`, `/digest`; `/benchmarks` is now a real registry. Masthead nav stays 4 items + search |
+
 ## Planned freezes
 
-- **CP-D (M7+M8):** corpus-index artifact format, Q&A MCP tool names/signatures, watchlist YAML shape, digest output location.
+_None — all cycle checkpoints through CP-D are frozen above._

@@ -1,0 +1,8 @@
+id: ghost-paper
+title: A watched paper pointing at a missing contribution
+source_url: https://arxiv.org/abs/9999.99999
+added_by:
+  name: Demo Author
+  team: demo-team
+status: tested
+resulting_contribution: no-such-contribution

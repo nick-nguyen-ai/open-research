@@ -2670,3 +2670,14 @@ Every section of the design delta maps to a task:
 **Accumulated execution-delta lessons applied:** (1) no `import.meta.url`-relative config reads in bundled code — pages read the `process.cwd()`-safe `config` object or imported `../data/*.json`; (2) `derive.mjs`/`build-index.mjs`/`build-digest.mjs` never import `config.mjs`; the derive CLI reads `platform.config.json` via the existing `import.meta.url` block; (3) card/summary-visible copy stays plain text (watchlist/benchmark/digest strings are literal YAML/derive output); (4) all git steps target `c4-qa-platform`, never `main`; the `write-replication` seed lands on the cycle branch, not a stray `contribute/*` branch; gate anchors use floors/invariants; (5) the installer additions preserve the injectable opts bag and the `flipMcp` guard keeps the Cycle-2 hermetic tests byte-identical.
 
 **CP-E impact (2 more contributions + a replication later) breaks nothing here:** the gate uses floors (`>= 20` chunks, `>= 4` watchlist rows, `rows.length === content.benchmarks.length`, section arrays) not exact totals; the digest window anchors to the latest content date so new activity simply enters the window; `deriveBenchmarks`/`deriveWatchlist`/`buildQaIndex` iterate whatever content exists; the MCP server rebuilds/reloads the index from current content; `check-links` required routes are additive. New contributions flow through every derived output without a code change.
+
+---
+
+## Execution deltas (recorded at final review, 2026-07-14)
+
+1. **Task 1 — prototype-collision fix in bm25.mjs** (plan-latent): token "constructor" corrupted tf/df via Object.prototype; null-prototype maps + `Object.hasOwn` search guards (load-bearing for JSON-revived indexes).
+2. **Task 2 — chunk-id dedup** (plan-latent, live in artifact): bodies opening `## Summary` collided with the frontmatter chunk id; per-contribution Set + deterministic `-2` suffixes; local slugger replaced by shared `slugifyHeading`.
+3. **Task 6 — extra ripple**: `site/test/cycle2-counts.test.js` also pinned 0.3.0/roster; updated alongside the brief-named tests (floor semantics preserved).
+4. **Final batch**: search gate assertion → top-3 containment (CP-E's indexing report shares "chunking" vocabulary); try-this-paper walkthrough step-1 quote made literal; `mcp/README.md` + `toolkit/README.md` refreshed to shipped state (v0.4.0, 5 skills, server real).
+
+Deferred minors in `.superpowers/sdd/progress.md` (C4 sections): markdown-link noise in BM25 df; known-method-as-notification replies; movers-label nuance; dead `.giscus-mount` CSS.

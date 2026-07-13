@@ -1,0 +1,24 @@
+---
+import { config } from "../config.mjs";
+const { slug } = Astro.props;
+const enabled = config.discussionsEnabled;
+---
+<section class="disc">
+  <p class="caps" style="color: var(--oxblood)">Discussions</p>
+  {enabled ? (
+    <div class="giscus-mount" data-giscus-slug={slug}>
+      {/* giscus embed is injected at port time (needs a GitHub Discussions backend). */}
+    </div>
+  ) : (
+    <p class="stub">Discussions light up when this deployment is connected to GitHub Discussions.
+      Set <code>discussions.enabled</code> in <code>platform.config.json</code> to turn them on — no external
+      requests are made while they are off.</p>
+  )}
+</section>
+<style>
+  .disc { border-top: 1px solid var(--hairline); margin-top: 32px; padding-top: 16px; }
+  .disc .stub { color: var(--slate); font-size: 13.5px; max-width: 62ch; margin: 8px 0 0; }
+  .disc code { font-family: ui-monospace, Consolas, monospace; font-size: .88em; background: var(--soft);
+               border: 1px solid var(--hairline); border-radius: 4px; padding: 1px 5px; }
+  .giscus-mount { min-height: 40px; }
+</style>

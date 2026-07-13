@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // OpenResearch toolkit installer. Pure Node, zero dependencies.
 // init / update / doctor, with --dry-run printing the exact command plan.
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname, delimiter as PATH_DELIMITER } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -39,6 +39,26 @@ export function loadPlatformConfig(repoRoot, read = (p) => readFileSync(p, "utf8
 
 export function pluginJsonPath(repoRoot) {
   return join(repoRoot, "toolkit", "plugins", "openresearch", ".claude-plugin", "plugin.json");
+}
+
+export function mcpServerPath(repoRoot) {
+  return join(repoRoot, "toolkit", "plugins", "openresearch", "mcp", "server.mjs");
+}
+
+export function mcpJsonPath(repoRoot) {
+  return join(repoRoot, "toolkit", "plugins", "openresearch", ".mcp.json");
+}
+
+// Flip mcp.enabled true in platform.config.json, preserving every other key.
+export function enableMcp(repoRoot, {
+  read = (p) => readFileSync(p, "utf8"),
+  write = (p, s) => writeFileSync(p, s)
+} = {}) {
+  const p = join(repoRoot, "platform.config.json");
+  const cfg = JSON.parse(read(p));
+  cfg.mcp = { ...(cfg.mcp ?? {}), enabled: true };
+  write(p, JSON.stringify(cfg, null, 2) + "\n");
+  return cfg;
 }
 
 export function resolveSource(platform, repoRoot) {
@@ -122,6 +142,17 @@ export function doctor({
     detail: "not probed — real Bedrock verification is CBA-port work"
   });
 
+  const mcpPresent = repoRoot
+    ? (exists(mcpServerPath(repoRoot)) && exists(mcpJsonPath(repoRoot)))
+    : false;
+  checks.push({
+    name: "mcp server",
+    status: mcpPresent ? "ok" : "warn",
+    detail: mcpPresent
+      ? "Q&A MCP server present — enable with `openresearch init` (sets mcp.enabled)"
+      : "run from the repo root to detect the Q&A MCP server"
+  });
+
   return checks;
 }
 
@@ -160,6 +191,7 @@ export function main(argv, env = process.env, {
   cwd = process.cwd(),
   exists = existsSync,
   read = (p) => readFileSync(p, "utf8"),
+  write = (p, s) => writeFileSync(p, s),
   spawn = spawnSync
 } = {}) {
   const { command, dryRun, version } = parseArgs(argv);
@@ -176,13 +208,24 @@ export function main(argv, env = process.env, {
       const plugin = JSON.parse(read(pluginJsonPath(repoRoot)));
       plan = planUpdate(source, { version, pluginVersion: plugin.version });
     }
+    const flipMcp = command === "init" && exists(mcpServerPath(repoRoot));
+
     if (!dryRun && !which("claude", { path, exists })) {
       // Manual-instructions path: print every command, spawn nothing, exit 0.
       log("claude CLI not found — run these manually once it is installed:");
       for (const args of plan) log(args.join(" "));
       return 0;
     }
-    return runPlan(plan, dryRun, { log, path, exists, spawn });
+    runPlan(plan, dryRun, { log, path, exists, spawn });
+    if (flipMcp) {
+      if (dryRun) {
+        log("[dry-run] set mcp.enabled=true in platform.config.json");
+      } else {
+        enableMcp(repoRoot, { read, write });
+        log("mcp.enabled set true in platform.config.json — restart Claude Code to load the Q&A server");
+      }
+    }
+    return plan;
   }
   if (command === "doctor") {
     const checks = doctor({ path, exists, repoRoot });

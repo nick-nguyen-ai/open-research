@@ -1,0 +1,93 @@
+---
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import { fmtDate } from "../lib/format.mjs";
+import digest from "../data/digest.json";
+const empty = digest.contributions.length === 0 && digest.replications.length === 0 && digest.adoptions.length === 0;
+---
+<Base title="Digest · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead />
+    <section class="rv" style="padding: 40px 0 8px; max-width: 60ch;">
+      <p class="caps" style="color: var(--oxblood)">The Digest</p>
+      <h1 class="font-display" style="font-weight: 600; font-size: clamp(28px,4vw,40px); line-height: 1.12; margin: 10px 0 10px; text-wrap: balance;">
+        The last seven days on the record.
+      </h1>
+      <p style="color: var(--slate); margin: 0;">
+        Window {fmtDate(digest.window.start, "full")} — {fmtDate(digest.window.end, "full")}. Built on demand; the weekly
+        cadence is the CI cron's job when deployed.
+      </p>
+    </section>
+
+    {empty && <p class="none rv">Nothing new in this window. Check the <a href="/browse">record</a>.</p>}
+
+    {digest.contributions.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">New contributions</p>
+        {digest.contributions.map((c) => (
+          <a class="item" href={`/contributions/${c.slug}`}>
+            <span class="it-title">{c.title}</span>
+            <span class="it-meta">{c.tier} · {fmtDate(c.date, "short")}</span>
+          </a>
+        ))}
+      </section>
+    )}
+
+    {digest.replications.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">New replications</p>
+        {digest.replications.map((r) => (
+          <a class="item" href={`/contributions/${r.slug}`}>
+            <span class="it-title">{r.slug}</span>
+            <span class="it-meta">{r.team} · {r.outcome}{r.delta ? ` · ${r.delta}` : ""} · {fmtDate(r.date, "short")}</span>
+          </a>
+        ))}
+      </section>
+    )}
+
+    {digest.adoptions.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">New adoptions</p>
+        {digest.adoptions.map((a) => (
+          <a class="item" href={`/contributions/${a.slug}`}>
+            <span class="it-title">{a.slug}</span>
+            <span class="it-meta">{a.team} · {a.status} · {fmtDate(a.date, "short")}</span>
+          </a>
+        ))}
+      </section>
+    )}
+
+    {digest.movers.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">Movers</p>
+        <div class="movers">
+          {digest.movers.map((m, i) => (
+            <a class="mover" href={`/people/${m.handle}`}>
+              <span class="mv-rank">{i + 1}</span><span class="mv-name">{m.name}</span><span class="mv-pts">+{m.points}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <Footer />
+  </main>
+</Base>
+<style>
+  .none { color: var(--slate); margin: 20px 0; }
+  .none a { color: var(--oxblood); }
+  .sec { margin: 26px 0 6px; }
+  .item { display: flex; justify-content: space-between; gap: 14px; align-items: baseline;
+          padding: 11px 4px; border-bottom: 1px solid var(--hairline); text-decoration: none; color: inherit; }
+  .item:hover { background: var(--soft); }
+  .it-title { color: var(--ink); font-weight: 600; }
+  .it-meta { color: var(--slate); font-size: 12.5px; font-family: system-ui, sans-serif; }
+  .movers { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .mover { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; color: inherit;
+           border: 1px solid var(--hairline); border-radius: 6px; padding: 6px 12px; }
+  .mover:hover { border-color: var(--oxblood); }
+  .mv-rank { color: var(--oxblood); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mv-name { color: var(--ink); font-weight: 600; }
+  .mv-pts { color: var(--slate); font-variant-numeric: tabular-nums; }
+</style>

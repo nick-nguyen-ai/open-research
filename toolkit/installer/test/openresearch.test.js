@@ -30,14 +30,14 @@ test("planInit plans marketplace-add then install", () => {
 });
 
 test("planUpdate plans update+install; --version must match plugin.json", () => {
-  assert.deepEqual(planUpdate("/repo/toolkit", { version: null, pluginVersion: "0.3.0" }), [
+  assert.deepEqual(planUpdate("/repo/toolkit", { version: null, pluginVersion: "0.4.0" }), [
     ["claude", "plugin", "marketplace", "update", "openresearch"],
     ["claude", "plugin", "install", "openresearch@openresearch"]
   ]);
-  assert.deepEqual(planUpdate("/repo/toolkit", { version: "0.3.0", pluginVersion: "0.3.0" }).length, 2);
+  assert.deepEqual(planUpdate("/repo/toolkit", { version: "0.4.0", pluginVersion: "0.4.0" }).length, 2);
   assert.throws(
-    () => planUpdate("/repo/toolkit", { version: "0.9.9", pluginVersion: "0.3.0" }),
-    /does not match plugin.json version 0.3.0/
+    () => planUpdate("/repo/toolkit", { version: "0.9.9", pluginVersion: "0.4.0" }),
+    /does not match plugin.json version 0.4.0/
   );
 });
 

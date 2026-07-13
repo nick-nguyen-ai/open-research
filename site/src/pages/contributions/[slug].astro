@@ -9,6 +9,7 @@ import CitationBlock from "../../components/CitationBlock.astro";
 import ContentsList from "../../components/ContentsList.astro";
 import Rail from "../../components/Rail.astro";
 import Changelog from "../../components/Changelog.astro";
+import Discussions from "../../components/Discussions.astro";
 import evidence from "../../data/evidence.json";
 import { fmtDate, readTime, tierLabel, slugifyName } from "../../lib/format.mjs";
 
@@ -60,6 +61,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
             <a href="/contribute">Tried it? Add evidence →</a>
           </div>
         )}
+        <Discussions slug={slug} />
       </article>
       {!isNote && <Rail headings={h2s} replications={ev.replications} endorsements={ev.endorsements} adoptions={adoptions} />}
     </div>

@@ -25,5 +25,11 @@ export function check(content) {
       if (!contributionIds.has(rel)) flag(c.file, `related.internal "${rel}" does not match any contribution`);
     }
   }
+  for (const w of content.watchlist ?? []) {
+    const rc = w.data?.resulting_contribution;
+    if (rc && !contributionIds.has(rc)) {
+      flag(w.file, `resulting_contribution "${rc}" does not match any contribution`);
+    }
+  }
   return findings;
 }

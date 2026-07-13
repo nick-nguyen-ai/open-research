@@ -43,7 +43,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dist = process.argv[2] ?? fileURLToPath(new URL("../dist", import.meta.url));
   const problems = checkDist(dist, {
     requiredRoutes: [
-      "/", "/browse/", "/contribute/", "/benchmarks/", "/arena/", "/toolkit/", "/404.html",
+      "/", "/browse/", "/contribute/", "/benchmarks/", "/arena/", "/toolkit/", "/watchlist/", "/digest/", "/404.html",
       "/contributions/prompt-cache-evals/", "/contributions/heading-aware-chunking/",
       "/contributions/structured-output-kyc/", "/contributions/temperature-drift-evals/",
       "/contributions/retrieval-reranker-lite/", "/contributions/pii-scrubber-prompts/",

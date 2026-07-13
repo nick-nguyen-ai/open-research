@@ -1,5 +1,82 @@
 ---
-import Placeholder from "../components/Placeholder.astro";
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import benchmarks from "../data/benchmarks.json";
 ---
-<Placeholder title="Benchmark registry" milestone="M8" active="benchmarks"
-  blurb="A shared catalog of internal eval sets, so replication deltas are comparable across teams. Records already reference benchmarks today; this page will render the registry." />
+<Base title="Benchmark registry · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="benchmarks" />
+    <section class="rv" style="padding: 40px 0 8px; max-width: 64ch;">
+      <p class="caps" style="color: var(--oxblood)">Benchmark registry</p>
+      <h1 class="font-display" style="font-weight: 600; font-size: clamp(28px,4vw,40px); line-height: 1.12; margin: 10px 0 12px; text-wrap: balance;">
+        Shared eval sets, so deltas are comparable across teams.
+      </h1>
+      <p style="color: var(--slate); margin: 0;">
+        Every registered benchmark, its owner and metrics, and the contributions and replications that cite it.
+        Tracking a paper toward a new contribution? See the <a href="/watchlist">watchlist</a>.
+      </p>
+    </section>
+
+    <div class="reg rv">
+      {benchmarks.map((b) => (
+        <article class="bm">
+          <div class="bm-head">
+            <h2 id={b.id} class="font-display">{b.id}</h2>
+            <span class="caps">owner · {b.owner.name} · {b.owner.team}</span>
+          </div>
+          <p class="bm-desc">{b.description}</p>
+          <p class="caps mono">data · {b.data_pointer}</p>
+
+          <table class="metrics">
+            <thead><tr><th>Metric</th><th>Definition</th><th>Direction</th></tr></thead>
+            <tbody>
+              {b.metrics.map((m) => (
+                <tr>
+                  <td class="mono">{m.name}</td>
+                  <td>{m.definition}</td>
+                  <td>{m.higher_is_better === true ? "higher is better" : m.higher_is_better === false ? "lower is better" : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div class="bm-refs">
+            <div>
+              <span class="caps" style="color: var(--oxblood)">Contributions ({b.contributions.length})</span>
+              {b.contributions.length > 0
+                ? <ul>{b.contributions.map((c) => <li><a href={`/contributions/${c.slug}`}>{c.title}</a></li>)}</ul>
+                : <p class="none">none yet</p>}
+            </div>
+            <div>
+              <span class="caps" style="color: var(--oxblood)">Replications ({b.replications.length})</span>
+              {b.replications.length > 0
+                ? <ul>{b.replications.map((r) => <li><a href={`/contributions/${r.slug}`}>{r.slug}</a> · {r.team} · {r.outcome}{r.delta ? ` · ${r.delta}` : ""}</li>)}</ul>
+                : <p class="none">none yet</p>}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <Footer />
+  </main>
+</Base>
+<style>
+  .reg { margin: 22px 0 8px; display: flex; flex-direction: column; gap: 28px; }
+  .bm { border: 1px solid var(--hairline); border-radius: 6px; padding: 20px 22px; }
+  .bm-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .bm-head h2 { margin: 0; font-weight: 600; font-size: 20px; }
+  .bm-desc { color: var(--ink); margin: 10px 0 6px; max-width: 70ch; }
+  .mono { font-family: ui-monospace, Consolas, monospace; }
+  .caps.mono { color: var(--slate); }
+  table.metrics { border-collapse: collapse; font-size: 13.5px; margin: 12px 0; display: block; overflow-x: auto; }
+  .metrics th, .metrics td { border: 1px solid var(--hairline); padding: 7px 12px; text-align: left; vertical-align: top; }
+  .metrics th { font-family: system-ui, sans-serif; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--slate); }
+  .bm-refs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+  .bm-refs ul { padding-left: 16px; margin: 6px 0 0; }
+  .bm-refs li { font-size: 13.5px; color: var(--slate); margin: 4px 0; }
+  .bm-refs a { color: var(--oxblood); text-decoration: none; }
+  .none { color: var(--slate); font-size: 13px; margin: 6px 0 0; }
+  @media (max-width: 640px) { .bm-refs { grid-template-columns: 1fr; } }
+</style>
