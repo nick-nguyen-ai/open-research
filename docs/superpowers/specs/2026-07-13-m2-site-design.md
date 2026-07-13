@@ -119,7 +119,7 @@ astro build ──► dist/ ──► pagefind --site dist
 ## Schema & template evolutions (M1 assets, updated in M2)
 
 1. `contribution.schema.json`: optional `result` (string, e.g. `"−60% cost per run"`) and `result_detail` (string). Band renders only when `result` exists.
-2. Tutorial template + `REQUIRED_HEADINGS`: add `## You'll need` and `## You'll build` (validator + template + fixtures updated together).
+2. Tutorial template + `REQUIRED_HEADINGS`: `["What you'll learn", "Prerequisites", "Steps", "Wrap-up"]` becomes `["You'll need", "You'll build", "Steps", "Wrap-up"]` — the twin box supersedes the first two headings (validator + template + fixtures updated together).
 3. Seed content updated to exercise both (prompt-cache-evals gains `result`/`result_detail`).
 
 ## Error handling
