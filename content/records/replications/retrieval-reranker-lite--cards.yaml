@@ -1,0 +1,10 @@
+contribution_id: retrieval-reranker-lite
+replicator:
+  name: Liam Fitzgerald
+  team: cards-experience
+  division: Cards
+benchmark_id: rerank-eval-set
+method: Re-ran the bundle's top-50-then-rerank pipeline against the shared rerank eval set.
+outcome: replicated
+measured_delta: ndcg@10 +7pt, +38ms median
+date: 2026-07-14

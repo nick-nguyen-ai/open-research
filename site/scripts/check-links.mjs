@@ -45,7 +45,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     requiredRoutes: [
       "/", "/browse/", "/contribute/", "/benchmarks/", "/arena/", "/toolkit/", "/404.html",
       "/contributions/prompt-cache-evals/", "/contributions/heading-aware-chunking/",
-      "/contributions/structured-output-kyc/", "/contributions/temperature-drift-evals/"
+      "/contributions/structured-output-kyc/", "/contributions/temperature-drift-evals/",
+      "/contributions/retrieval-reranker-lite/", "/contributions/pii-scrubber-prompts/",
     ]
   });
   if (problems.length > 0) {
