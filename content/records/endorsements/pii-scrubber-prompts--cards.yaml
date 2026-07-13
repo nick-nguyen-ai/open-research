@@ -1,0 +1,9 @@
+contribution_id: pii-scrubber-prompts
+type: adoption
+by:
+  name: Liam Fitzgerald
+  team: cards-experience
+  division: Cards
+statement: Adopted as a required pre-pass in our assistant pipeline; the audit numbers held on our traffic.
+pipeline: cards-assistant-prompts
+date: 2026-07-14

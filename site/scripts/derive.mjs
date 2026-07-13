@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
@@ -109,6 +109,44 @@ export function derive(contentRoot, { rev = gitRev } = {}) {
   return { stats, cards, filters, evidence };
 }
 
+export function deriveToolkit(toolkitDir, { repo = null, host = "github.com" } = {}) {
+  const mkPath = join(toolkitDir, "marketplace.json");
+  const plPath = join(toolkitDir, "plugins", "openresearch", ".claude-plugin", "plugin.json");
+  if (!existsSync(mkPath)) throw new Error(`derive: missing ${mkPath}`);
+  if (!existsSync(plPath)) throw new Error(`derive: missing ${plPath}`);
+
+  let marketplace, plugin;
+  try {
+    marketplace = JSON.parse(readFileSync(mkPath, "utf8"));
+  } catch (err) {
+    throw new Error(`derive: malformed ${mkPath} — ${err.message}`);
+  }
+  try {
+    plugin = JSON.parse(readFileSync(plPath, "utf8"));
+  } catch (err) {
+    throw new Error(`derive: malformed ${plPath} — ${err.message}`);
+  }
+
+  const entry = (marketplace.plugins ?? []).find((p) => p.name === plugin.name);
+  if (!entry) throw new Error(`derive: marketplace.json has no plugin named "${plugin.name}"`);
+  if (!Array.isArray(entry.skills)) {
+    throw new Error(`derive: plugin "${plugin.name}" has no skills[] in marketplace.json`);
+  }
+
+  const marketplaceAdd = repo
+    ? `claude plugin marketplace add https://${host}/${repo}`
+    : "claude plugin marketplace add ./toolkit";
+
+  return {
+    name: plugin.name,
+    version: plugin.version,
+    description: plugin.description ?? entry.description ?? "",
+    source: entry.source,
+    skills: entry.skills.map((s) => ({ name: s.name, purpose: s.purpose, shipsIn: s.shipsIn ?? null })),
+    install: { init: "npx openresearch init", marketplaceAdd }
+  };
+}
+
 // CLI: node scripts/derive.mjs [contentRoot] [outDir]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const contentRoot = process.argv[2] ?? fileURLToPath(new URL("../../content", import.meta.url));
@@ -120,6 +158,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     writeFileSync(join(outDir, "cards.json"), JSON.stringify(cards, null, 2));
     writeFileSync(join(outDir, "filters.json"), JSON.stringify(filters, null, 2));
     writeFileSync(join(outDir, "evidence.json"), JSON.stringify(evidence, null, 2));
+    const toolkitDir = fileURLToPath(new URL("../../toolkit", import.meta.url));
+    const platform = JSON.parse(readFileSync(fileURLToPath(new URL("../../platform.config.json", import.meta.url)), "utf8"));
+    const toolkit = deriveToolkit(toolkitDir, { repo: platform.repo, host: platform.host });
+    writeFileSync(join(outDir, "toolkit.json"), JSON.stringify(toolkit, null, 2));
     console.log(`derive: ${stats.contributions} contributions → ${outDir}`);
   } catch (err) {
     console.error(err.message);

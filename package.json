@@ -1,9 +1,9 @@
 {
-  "name": "openresearch",
+  "name": "openresearch-monorepo",
   "private": true,
   "type": "module",
   "engines": { "node": ">=20" },
-  "workspaces": ["content/validator", "site"],
+  "workspaces": ["content/validator", "site", "toolkit/installer"],
   "scripts": {
     "validate": "node content/validator/bin/validate.js",
     "test": "npm test --workspaces",

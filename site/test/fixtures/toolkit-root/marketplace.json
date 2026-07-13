@@ -1,0 +1,16 @@
+{
+  "name": "openresearch",
+  "owner": { "name": "OpenResearch", "url": "https://example.internal/openresearch" },
+  "plugins": [
+    {
+      "name": "openresearch",
+      "source": "./plugins/openresearch",
+      "description": "Fixture toolkit.",
+      "skills": [
+        { "name": "judge", "purpose": "advisory review", "shipsIn": null },
+        { "name": "publish", "purpose": "draft to PR", "shipsIn": null },
+        { "name": "try-this-paper", "purpose": "run the bundle", "shipsIn": "M7" }
+      ]
+    }
+  ]
+}

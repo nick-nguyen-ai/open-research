@@ -2135,3 +2135,18 @@ No placeholders (`TBD`, "similar to task N", "add appropriate X") remain. Frozen
 contracts are untouched: `derive()`'s four outputs keep their shapes (toolkit.json is a
 separate additive function), routes are unchanged, and `config.repoUrl` is preserved.
 ```
+---
+
+## Execution deltas (recorded at final review, 2026-07-14)
+
+Deviations from this plan's literal text, all reviewed and approved during SDD execution:
+
+1. **Task 1 — `config.mjs` resolves `platform.config.json` via `process.cwd()`**, not `import.meta.url`: Vite relocates the module into `site/dist/chunks/` at build, breaking relative-URL resolution. Verified cwd = `site/` in every real invocation context. Corollary: `derive.mjs` must never import `config.mjs` (it runs with cwd = repo root); its CLI reads the config via `import.meta.url` directly.
+2. **Task 2 — root package renamed `openresearch-monorepo`** (collision with the installer package name); `package-lock.json` committed with the workspace addition.
+3. **Task 2 — Windows real-run fixes**: `resolveExecutable` export added; `runPlan` spawns `.cmd`/`.bat` shims via scoped shell with space-quoted args; missing-`claude` real runs print ALL manual commands and exit 0 without spawning; three tests cover the previously untested `main()` surface.
+4. **Task 6 — publish step 4 wires the existing-branch fallback** (`checkout -b` → `checkout` + amend on re-run), resolving the Procedure/Rules contradiction.
+5. **Task 10 — note openings are plain text** (markdown italic spans broke `firstSentence()` card derivation; CSS supplies the note lede italic); dogfood transcript gained a Scope note (judge is session-interactive, outside the non-interactive path per the cycle spec).
+6. **Task 10 — dogfood merged into `c2-toolkit-content`**, not `main` (plan fixed pre-execution; cycle merges to main only at CP-B).
+7. **Task 11 / final batch — cycle-count test is a `>=10` floor** (exact equality would break when CP-E adds contributions); CONTRACTS.md dry-run wording scoped to init/update; transcript intro scoped to the no-remote flow.
+
+Deferred minors are tracked in `.superpowers/sdd/progress.md` (C2 sections).

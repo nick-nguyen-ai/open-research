@@ -1,6 +1,8 @@
 {
   "name": "OpenResearch",
-  "ghHost": "github.com",
-  "repos": { "content": ".", "site": ".", "toolkit": "." },
-  "modelProvider": "claude-code-session"
+  "host": "github.com",
+  "repo": null,
+  "site": { "baseUrl": null },
+  "judge": { "ci": false },
+  "mcp": { "enabled": false }
 }

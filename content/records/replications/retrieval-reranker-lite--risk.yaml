@@ -1,0 +1,10 @@
+contribution_id: retrieval-reranker-lite
+replicator:
+  name: Daniel Okafor
+  team: risk-engineering
+  division: Risk
+benchmark_id: rerank-eval-set
+method: Applied the lite reranker to our risk-research retrieval and scored on the shared eval set.
+outcome: replicated
+measured_delta: ndcg@10 +9pt, +45ms median
+date: 2026-07-14

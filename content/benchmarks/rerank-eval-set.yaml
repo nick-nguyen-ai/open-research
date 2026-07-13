@@ -1,0 +1,13 @@
+id: rerank-eval-set
+owner:
+  name: Sofia Marchetti
+  team: markets-analytics
+description: Reranking eval set of 500 query-passage pairs with graded relevance labels drawn from markets research retrieval.
+data_pointer: ghe://markets-analytics/rerank-eval-set
+metrics:
+  - name: ndcg@10
+    definition: normalized discounted cumulative gain at rank 10 over graded relevance labels
+    higher_is_better: true
+  - name: latency_ms
+    definition: median added rerank latency per query in milliseconds
+    higher_is_better: false

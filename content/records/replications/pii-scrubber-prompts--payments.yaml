@@ -1,0 +1,10 @@
+contribution_id: pii-scrubber-prompts
+replicator:
+  name: Hana Kim
+  team: payments-platform
+  division: Payments
+workflow: Payments support-assistant prompt path, 2k sampled prompts audited for residual PII.
+method: Added the second verification pass ahead of our main call and re-audited a fresh 2k sample.
+outcome: replicated
+measured_delta: residual PII 4.6% -> 0.2%
+date: 2026-07-14
