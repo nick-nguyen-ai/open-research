@@ -1,0 +1,10 @@
+{
+  "name": "openresearch",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenResearch toolkit installer for Claude Code (init / update / doctor).",
+  "engines": { "node": ">=20" },
+  "bin": { "openresearch": "bin/openresearch.mjs" },
+  "scripts": { "test": "node --test" }
+}
