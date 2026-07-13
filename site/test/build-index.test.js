@@ -21,6 +21,20 @@ test("chunkContent emits a summary chunk plus one chunk per H2, published only",
   assert.equal(summary.section, "Summary");
 });
 
+test("chunk ids are unique: an H2 '## Summary' gets -2 next to the frontmatter #summary", () => {
+  const corpus = chunkContent(loadContent(root));
+  const ids = corpus.map((c) => c.id);
+  assert.equal(new Set(ids).size, ids.length);
+  // reranker-demo's body opens with "## Summary" — it must not collide with
+  // the frontmatter summary chunk.
+  assert.ok(ids.includes("reranker-demo#summary"));
+  assert.ok(ids.includes("reranker-demo#summary-2"));
+  const fmChunk = corpus.find((c) => c.id === "reranker-demo#summary");
+  const secChunk = corpus.find((c) => c.id === "reranker-demo#summary-2");
+  assert.match(fmChunk.text, /ndcg@10/); // frontmatter keeps the plain id
+  assert.match(secChunk.text, /latency tax/); // the H2 body gets the suffix
+});
+
 test("buildQaIndex returns a searchable index over the fixture corpus", () => {
   const index = buildQaIndex(root);
   assert.ok(index.chunks.length >= 4);

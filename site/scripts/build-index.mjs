@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { loadContent } from "@openresearch/validator/load";
 import { buildIndex } from "../src/lib/bm25.mjs";
+import { slugifyHeading } from "../src/lib/format.mjs";
 
 // Split published contributions into a search corpus: one Summary chunk from
 // frontmatter + one chunk per H2 section. Pure — depends only on loaded content.
@@ -15,10 +16,18 @@ export function chunkContent(content) {
     const summaryParts = [fm.title];
     if (fm.result) summaryParts.push(fm.result);
     if (fm.result_detail) summaryParts.push(fm.result_detail);
+    // Ids must be unique — Task 3's MCP server resolves chunks by id. The
+    // frontmatter chunk always keeps plain #summary; a colliding section id
+    // (e.g. a "## Summary" H2, or duplicate headings) gets -2, -3, ...
+    const used = new Set([`${slug}#summary`]);
     corpus.push({ id: `${slug}#summary`, slug, tier: fm.tier, section: "Summary", text: summaryParts.join(". ") });
     for (const sec of splitSections(c.body)) {
+      const base = `${slug}#${slugifyHeading(sec.heading)}`;
+      let id = base;
+      for (let n = 2; used.has(id); n++) id = `${base}-${n}`;
+      used.add(id);
       corpus.push({
-        id: `${slug}#${sectionSlug(sec.heading)}`,
+        id,
         slug, tier: fm.tier, section: sec.heading,
         text: `${sec.heading}. ${sec.text}`
       });
@@ -44,10 +53,6 @@ function splitSections(body) {
   return out
     .map((s) => ({ heading: s.heading, text: s.lines.join("\n").trim() }))
     .filter((s) => s.text.length > 0);
-}
-
-function sectionSlug(text) {
-  return text.toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 export function buildQaIndex(contentRoot) {
