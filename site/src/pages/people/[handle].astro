@@ -1,0 +1,92 @@
+---
+import Base from "../../layouts/Base.astro";
+import Masthead from "../../components/Masthead.astro";
+import Footer from "../../components/Footer.astro";
+import { fmtDate, tierLabel } from "../../lib/format.mjs";
+import people from "../../data/people.json";
+
+export function getStaticPaths() {
+  return Object.values(people).map((p) => ({ params: { handle: p.handle }, props: { p } }));
+}
+const { p } = Astro.props;
+---
+<Base title={`${p.name} · OpenResearch`} description={`${p.name} — contributor profile`}>
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="arena" />
+
+    <section class="head rv">
+      <p class="caps" style="color: var(--oxblood)">Contributor</p>
+      <h1 class="font-display" style="font-weight: 600; font-size: clamp(26px,3.6vw,36px); margin: 8px 0 6px;">{p.name}</h1>
+      <p class="sub">{p.team}{p.division ? ` · ${p.division}` : ""}</p>
+      <p class="score">
+        <span class="s">{p.score}</span> points ·
+        <a href="/arena">rank #{p.rank}</a> ·
+        {p.breakdown.authored} authored · {p.breakdown.replicationsReceived} replications received ·
+        {p.breakdown.replicationsPerformed} performed · {p.breakdown.adoptions} adoptions · {p.breakdown.endorsements} endorsements
+      </p>
+    </section>
+
+    {p.contributions.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">Contributions</p>
+        <div class="cards">
+          {p.contributions.map((c) => (
+            <a class="pcard" href={`/contributions/${c.slug}`}>
+              <span class="pk">{tierLabel(c.tier)}</span>
+              <span class="pt">{c.title}</span>
+              {c.result && <span class="pr">{c.result}</span>}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {p.replicationsPerformed.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">Replications performed</p>
+        {p.replicationsPerformed.map((r) => (
+          <a class="prow" href={`/contributions/${r.slug}`}>
+            <span class="who">{r.title}</span>
+            <span class="meta">{r.delta ? `${r.delta} · ` : ""}{r.benchmark} · {fmtDate(r.date, "short")}</span>
+          </a>
+        ))}
+      </section>
+    )}
+
+    {p.received.length > 0 && (
+      <section class="sec rv">
+        <p class="caps" style="color: var(--oxblood)">Adoptions & endorsements received</p>
+        {p.received.map((e) => (
+          <a class="prow" href={`/contributions/${e.slug}`}>
+            <span class="who"><span class={e.kind === "adoption" ? "seal" : "stamp"}>{e.kind}</span> {e.title}</span>
+            <span class="meta">{e.by} — {e.note}</span>
+          </a>
+        ))}
+      </section>
+    )}
+
+    <Footer />
+  </main>
+</Base>
+<style>
+  .head { padding: 40px 0 6px; max-width: 64ch; }
+  .sub { font-family: system-ui, sans-serif; font-size: 13px; color: var(--slate); margin: 0 0 8px; }
+  .score { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate); margin: 0; }
+  .score .s { font-size: 18px; color: var(--oxblood); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score a { color: var(--oxblood); text-decoration: none; }
+  .sec { margin: 30px 0 0; }
+  .sec .caps { margin: 0 0 12px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .pcard { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit;
+           border: 1px solid var(--hairline); border-radius: 6px; padding: 14px; }
+  .pcard:hover { border-color: var(--oxblood); }
+  .pk { font-family: system-ui, sans-serif; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--oxblood); }
+  .pt { font-weight: 600; color: var(--ink); line-height: 1.25; }
+  .pr { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--slate); }
+  .prow { display: flex; justify-content: space-between; gap: 16px; align-items: baseline;
+          text-decoration: none; color: inherit; padding: 10px 4px; border-bottom: 1px solid var(--hairline); flex-wrap: wrap; }
+  .prow:hover { background: var(--soft); }
+  .prow .who { color: var(--ink); font-weight: 600; }
+  .prow .meta { color: var(--slate); font-size: 12.5px; font-family: system-ui, sans-serif; }
+  @media (max-width: 640px) { .prow { flex-direction: column; gap: 2px; } }
+</style>

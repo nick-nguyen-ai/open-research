@@ -340,6 +340,21 @@ export function buildScoreModel(content) {
   return { individuals, teams: teamList, divisions };
 }
 
+export function derivePeople(content) {
+  const model = buildScoreModel(content);
+  const out = {};
+  model.individuals.forEach((ind, i) => {
+    out[ind.handle] = {
+      handle: ind.handle, name: ind.name, team: ind.team, division: ind.division,
+      rank: i + 1, score: ind.score, breakdown: { ...ind.breakdown },
+      contributions: ind.contributions,
+      replicationsPerformed: ind.replicationsPerformed,
+      received: ind.received
+    };
+  });
+  return out;
+}
+
 export function deriveArena(content, { now = () => new Date() } = {}) {
   const model = buildScoreModel(content);
   return {
@@ -371,6 +386,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const arenaContent = loadContent(contentRoot);
     const arena = deriveArena(arenaContent);
     writeFileSync(join(outDir, "arena.json"), JSON.stringify(arena, null, 2));
+    const people = derivePeople(arenaContent);
+    writeFileSync(join(outDir, "people.json"), JSON.stringify(people, null, 2));
     console.log(`derive: ${stats.contributions} contributions → ${outDir}`);
   } catch (err) {
     console.error(err.message);
