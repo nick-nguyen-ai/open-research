@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { applyFilter } from "./filter-logic.mjs";
-
-const TIER_LABELS = { finding: "Finding", "technical-report": "Report", tutorial: "Tutorial", note: "Note" };
+import { tierLabel } from "../../lib/format.mjs";
 
 function Chip({ label, active, onClick }) {
   return (
@@ -22,7 +21,7 @@ export default function BrowseFilter({ cards, filters, initial = {} }) {
       <div className="bf-row">
         <Chip label="All tiers" active={tier === "all"} onClick={() => setTier("all")} />
         {filters.tiers.map((t) => (
-          <Chip key={t.value} label={TIER_LABELS[t.value] ?? t.value} active={tier === t.value}
+          <Chip key={t.value} label={tierLabel(t.value)} active={tier === t.value}
                 onClick={() => setTier(tier === t.value ? "all" : t.value)} />
         ))}
         <span className="bf-sep" aria-hidden="true" />
@@ -40,7 +39,7 @@ export default function BrowseFilter({ cards, filters, initial = {} }) {
         {shown.map((c) => (
           <a key={c.slug} className="card" href={`/contributions/${c.slug}`}>
             <span className="caps" style={{ color: "var(--oxblood)" }}>
-              {TIER_LABELS[c.tier] ?? c.tier} · {c.category}
+              {tierLabel(c.tier)} · {c.category}
             </span>
             <h3>{c.title}</h3>
             <p className="card-summary">{c.summary}</p>
