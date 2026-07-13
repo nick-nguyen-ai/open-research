@@ -29,10 +29,15 @@ local branch + commit and print the exact commands a human runs later.
    - On success it prints `✓ content validation passed`.
 3. **Judge (advisory).** Run the `judge` skill on `<id>` inline. Show its output.
    The contributor may proceed regardless — never block on judge.
-4. **Branch + commit.** Run exactly:
-   - `git checkout -b contribute/<id>`
+4. **Branch + commit.** Run:
+   - `git checkout -b contribute/<id>` — if git reports the branch already exists
+     (`fatal: a branch named 'contribute/<id>' already exists`), run
+     `git checkout contribute/<id>` instead.
    - `git add content/contributions/<id>/ content/records/ content/benchmarks/`
-   - `git commit -m "contribute(<id>): <title>" -m "Co-Authored-By: <author> <email>"`
+   - First run: `git commit -m "contribute(<id>): <title>" -m "Co-Authored-By: <author> <email>"`
+   - Re-run (the branch already had this contribution's commit): amend it rather
+     than creating a second one — `git commit --amend --no-edit` (drop `--no-edit`
+     if the title changed).
 5. **Open the PR — config-driven.**
    - **If `platform.config.json.repo` is set** (remote mode): run
      `gh pr create --fill --base main --head contribute/<id>`
