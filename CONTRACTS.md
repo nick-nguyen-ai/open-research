@@ -33,7 +33,17 @@ Registry maintained per [`docs/superpowers/plans/2026-07-14-m2-m8-master-plan.md
 | Toolkit derive output | `site/scripts/derive.mjs` → `site/src/data/toolkit.json` | `{ name, version, description, source, skills:[{name,purpose,shipsIn}], install:{init, marketplaceAdd} }` (additive; existing derive outputs unchanged) |
 | No-remote fallback | `publish` skill + installer | When `platform.config.json.repo` is null, flows print exact push/PR commands instead of calling `gh` |
 
+## Frozen at CP-C (M5 + M6, 2026-07-14)
+
+| Contract | Definition lives at | Notes |
+|---|---|---|
+| Adoption record shape | `content/schemas/adoption.schema.json` | `{ contribution_id, adopter{person}, pipeline, status(active\|trialing\|retired), since, impact?, date }`; same `person` shape as elsewhere. M1 `type: adoption` endorsements remain valid (backward compatible) |
+| Loader adoptions array | `@openresearch/validator/load` → `loadContent(root)` | Return object gains `adoptions: [{file,data}]` (additive); existing keys unchanged. Crossref: adoption `contribution_id` must resolve |
+| Extended evidence shape | `site/scripts/derive.mjs` → `site/src/data/evidence.json` | `evidence[slug]` gains `adoptions:[{team,pipeline,status,impact,since,date}]` and `changelog:[{rev,date,subject}]` (last 5 non-merge commits, `[]` when no git); existing `replications`/`endorsements`/`rev` unchanged |
+| Arena scoring inputs | `site/scripts/derive.mjs` `buildScoreModel` | Point values (weights tunable, inputs frozen): authored 10; replication received 15 / performed 12 (only `replicated`, cross-team); adoption 8 (+4 impact); endorsement 3; adoption-type endorsement 8; self-team replication 0; retired adoption 0 |
+| `arena.json` shape | `site/scripts/derive.mjs` → `site/src/data/arena.json` | `{ individuals:[{handle,name,team,division,score,breakdown{authored,replicationsReceived,replicationsPerformed,adoptions,endorsements}}], teams:[{team,division,score,members}], divisions:[{division,score,teams}], generated }`; null-division teams excluded from divisions |
+| `/people/<handle>` route + profile shape | `site/src/pages/people/[handle].astro` → `site/src/data/people.json` | Keyed by `handle` (= lowercase-hyphenated name); `{handle,name,team,division,rank,score,breakdown,contributions[],replicationsPerformed[],received[]}`; generated for every scored person |
+
 ## Planned freezes
 
-- **CP-C (M5+M6):** adoption record schema, extended `evidence{}` shape, arena scoring inputs + `arena.json` shape, `/people/<handle>` route + profile JSON shape.
 - **CP-D (M7+M8):** corpus-index artifact format, Q&A MCP tool names/signatures, watchlist YAML shape, digest output location.
