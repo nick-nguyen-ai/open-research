@@ -63,7 +63,7 @@ export function planUpdate(source, { version = null, pluginVersion } = {}) {
   ];
 }
 
-export function which(bin, {
+export function resolveExecutable(bin, {
   path = process.env.PATH ?? "",
   exists = existsSync,
   delimiter = PATH_DELIMITER,
@@ -72,10 +72,15 @@ export function which(bin, {
   for (const dir of path.split(delimiter)) {
     if (!dir) continue;
     for (const ext of exts) {
-      if (exists(join(dir, bin + ext))) return true;
+      const candidate = join(dir, bin + ext);
+      if (exists(candidate)) return candidate;
     }
   }
-  return false;
+  return null;
+}
+
+export function which(bin, opts = {}) {
+  return resolveExecutable(bin, opts) !== null;
 }
 
 export function doctor({
@@ -120,13 +125,29 @@ export function doctor({
   return checks;
 }
 
-function runPlan(plan, dryRun) {
+function runPlan(plan, dryRun, {
+  log = console.log,
+  path = process.env.PATH ?? "",
+  exists = existsSync,
+  spawn = spawnSync
+} = {}) {
   for (const args of plan) {
     if (dryRun) {
-      console.log(`[dry-run] ${args.join(" ")}`);
+      log(`[dry-run] ${args.join(" ")}`);
       continue;
     }
-    const r = spawnSync(args[0], args.slice(1), { stdio: "inherit" });
+    // Windows: npm-installed CLIs are .cmd/.bat shims that spawnSync cannot
+    // launch bare (ENOENT). Resolve the executable, and go through the shell
+    // for shims — quoting each arg that contains whitespace.
+    const resolved = resolveExecutable(args[0], { path, exists }) ?? args[0];
+    const lower = resolved.toLowerCase();
+    let r;
+    if (lower.endsWith(".cmd") || lower.endsWith(".bat")) {
+      const q = (a) => (/\s/.test(a) ? `"${a}"` : a);
+      r = spawn(q(resolved), args.slice(1).map(q), { stdio: "inherit", shell: true });
+    } else {
+      r = spawn(resolved, args.slice(1), { stdio: "inherit" });
+    }
     if (r.error || r.status !== 0) {
       throw new Error(`openresearch: command failed — ${args.join(" ")}`);
     }
@@ -134,25 +155,38 @@ function runPlan(plan, dryRun) {
   return plan;
 }
 
-export function main(argv, env = process.env) {
+export function main(argv, env = process.env, {
+  log = console.log,
+  cwd = process.cwd(),
+  exists = existsSync,
+  read = (p) => readFileSync(p, "utf8"),
+  spawn = spawnSync
+} = {}) {
   const { command, dryRun, version } = parseArgs(argv);
-  const repoRoot = findRepoRoot(process.cwd());
-  const platform = loadPlatformConfig(repoRoot);
+  const repoRoot = findRepoRoot(cwd, exists);
+  const platform = loadPlatformConfig(repoRoot, read);
   const source = resolveSource(platform, repoRoot);
+  const path = env.OPENRESEARCH_PATH_OVERRIDE ?? env.PATH ?? "";
 
-  if (command === "init") {
-    if (!which("claude", { path: env.OPENRESEARCH_PATH_OVERRIDE ?? env.PATH ?? "" })) {
-      console.log("claude CLI not found — run these manually once it is installed:");
+  if (command === "init" || command === "update") {
+    let plan;
+    if (command === "init") {
+      plan = planInit(source);
+    } else {
+      const plugin = JSON.parse(read(pluginJsonPath(repoRoot)));
+      plan = planUpdate(source, { version, pluginVersion: plugin.version });
     }
-    return runPlan(planInit(source), dryRun);
-  }
-  if (command === "update") {
-    const plugin = JSON.parse(readFileSync(pluginJsonPath(repoRoot), "utf8"));
-    return runPlan(planUpdate(source, { version, pluginVersion: plugin.version }), dryRun);
+    if (!dryRun && !which("claude", { path, exists })) {
+      // Manual-instructions path: print every command, spawn nothing, exit 0.
+      log("claude CLI not found — run these manually once it is installed:");
+      for (const args of plan) log(args.join(" "));
+      return 0;
+    }
+    return runPlan(plan, dryRun, { log, path, exists, spawn });
   }
   if (command === "doctor") {
-    const checks = doctor({ path: env.OPENRESEARCH_PATH_OVERRIDE ?? env.PATH ?? "", repoRoot });
-    for (const c of checks) console.log(`[${c.status}] ${c.name} — ${c.detail}`);
+    const checks = doctor({ path, exists, repoRoot });
+    for (const c of checks) log(`[${c.status}] ${c.name} — ${c.detail}`);
     if (checks.some((c) => c.status === "fail")) process.exitCode = 1;
     return checks;
   }

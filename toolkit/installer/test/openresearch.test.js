@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { join } from "node:path";
 import {
   parseArgs, findRepoRoot, resolveSource,
-  planInit, planUpdate, which, doctor
+  planInit, planUpdate, which, doctor,
+  resolveExecutable, main
 } from "../bin/openresearch.mjs";
 
 test("parseArgs reads command, --dry-run, and --version <semver>", () => {
@@ -50,6 +51,61 @@ test("findRepoRoot walks up to platform.config.json, else throws", () => {
   const exists = (p) => p === join("/a", "platform.config.json");
   assert.equal(findRepoRoot("/a/b/c", exists), "/a");
   assert.throws(() => findRepoRoot("/x/y", () => false), /platform.config.json not found/);
+});
+
+test("resolveExecutable returns the full path, probing Windows extensions", () => {
+  const exists = (p) => p === join("/opt/bin", "claude.cmd");
+  assert.equal(
+    resolveExecutable("claude", { path: "/opt/bin", exists, delimiter: ":", exts: ["", ".exe", ".cmd", ".bat"] }),
+    join("/opt/bin", "claude.cmd")
+  );
+  assert.equal(
+    resolveExecutable("gh", { path: "/opt/bin", exists, delimiter: ":", exts: ["", ".exe", ".cmd", ".bat"] }),
+    null
+  );
+});
+
+// main() injection for hermetic tests: env plus an opts bag
+// { log, cwd, exists, read, spawn } — no real fs, PATH, or child processes.
+test("main init --dry-run prints the [dry-run] command plan and spawns nothing", () => {
+  const lines = [];
+  let spawned = 0;
+  const exists = (p) => p === join("/repo", "platform.config.json");
+  const read = () => JSON.stringify({ host: "github.com", repo: null });
+  const plan = main(["init", "--dry-run"], { PATH: "" }, {
+    log: (s) => lines.push(s),
+    cwd: join("/repo", "sub", "dir"),
+    exists,
+    read,
+    spawn: () => { spawned++; return { status: 0 }; }
+  });
+  assert.equal(spawned, 0);
+  assert.deepEqual(lines, [
+    `[dry-run] claude plugin marketplace add ${join("/repo", "toolkit")}`,
+    "[dry-run] claude plugin install openresearch@openresearch"
+  ]);
+  assert.equal(plan.length, 2);
+});
+
+test("main init with claude missing prints all manual commands, spawns nothing, returns 0", () => {
+  const lines = [];
+  let spawned = 0;
+  const exists = (p) => p === join("/repo", "platform.config.json"); // no claude anywhere
+  const read = () => JSON.stringify({ host: "github.com", repo: null });
+  const rc = main(["init"], { PATH: "/opt/bin" }, {
+    log: (s) => lines.push(s),
+    cwd: join("/repo", "sub"),
+    exists,
+    read,
+    spawn: () => { spawned++; return { status: 0 }; }
+  });
+  assert.equal(rc, 0);
+  assert.equal(spawned, 0);
+  assert.deepEqual(lines, [
+    "claude CLI not found — run these manually once it is installed:",
+    `claude plugin marketplace add ${join("/repo", "toolkit")}`,
+    "claude plugin install openresearch@openresearch"
+  ]);
 });
 
 test("doctor: node<20 fails; present claude is ok; missing gh warns", () => {
