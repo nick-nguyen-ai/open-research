@@ -1,0 +1,10 @@
+id: internal-eval-suite
+owner:
+  name: Nick
+  team: Model Validation
+description: Shared regression eval suite for validation prompts.
+data_pointer: ghe://model-validation/eval-suite
+metrics:
+  - name: accuracy
+    definition: exact-match over gold labels
+    higher_is_better: true
