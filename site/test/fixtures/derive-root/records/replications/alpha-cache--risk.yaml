@@ -1,0 +1,9 @@
+contribution_id: alpha-cache
+replicator:
+  name: Rui
+  team: Risk
+workflow: Nightly risk model eval workflow, 200 cases.
+method: Applied the technique to our own workflow and compared spend.
+outcome: partial
+measured_delta: cost -20%
+date: 2026-07-12

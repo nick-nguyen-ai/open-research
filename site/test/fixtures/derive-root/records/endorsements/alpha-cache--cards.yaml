@@ -1,0 +1,7 @@
+contribution_id: alpha-cache
+type: adoption
+by:
+  name: Grace
+  team: Cards
+statement: Adopted in our nightly pipeline; savings match the reported numbers.
+date: 2026-07-12
