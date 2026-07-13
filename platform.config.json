@@ -4,5 +4,6 @@
   "repo": null,
   "site": { "baseUrl": null },
   "judge": { "ci": false },
-  "mcp": { "enabled": false }
+  "mcp": { "enabled": false },
+  "discussions": { "enabled": false }
 }

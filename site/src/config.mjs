@@ -35,5 +35,6 @@ export const config = {
   repoUrl: deriveRepoUrl(platform),
   baseUrl: platform.site?.baseUrl ?? null,
   judgeCi: platform.judge?.ci ?? false,
-  mcpEnabled: platform.mcp?.enabled ?? false
+  mcpEnabled: platform.mcp?.enabled ?? false,
+  discussionsEnabled: platform.discussions?.enabled ?? false
 };
