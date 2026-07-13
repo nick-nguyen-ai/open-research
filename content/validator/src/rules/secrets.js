@@ -13,7 +13,8 @@ const PATTERNS = [
 
 const TEXT_EXT = new Set([
   ".md", ".yaml", ".yml", ".json", ".py", ".js", ".ts", ".sh",
-  ".txt", ".csv", ".toml", ".cfg", ".ini"
+  ".txt", ".csv", ".toml", ".cfg", ".ini",
+  ".pem", ".key", ".crt", ".pub"
 ]);
 
 const SKIP_DIRS = new Set(["node_modules", "validator"]);
@@ -36,9 +37,12 @@ export function check(content) {
 
 function walk(dir, fn) {
   for (const name of readdirSync(dir)) {
-    if (SKIP_DIRS.has(name) || name.startsWith(".")) continue;
     const p = join(dir, name);
-    if (statSync(p).isDirectory()) walk(p, fn);
-    else fn(p);
+    if (statSync(p).isDirectory()) {
+      if (SKIP_DIRS.has(name) || name.startsWith(".")) continue;
+      walk(p, fn);
+    } else {
+      fn(p);
+    }
   }
 }

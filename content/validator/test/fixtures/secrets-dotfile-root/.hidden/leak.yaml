@@ -1,0 +1,2 @@
+# this lives inside a dot-directory and must never be scanned
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
