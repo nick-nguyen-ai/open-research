@@ -1,0 +1,18 @@
+---
+import { config } from "../config.mjs";
+const { slug, bundle, benchmarks = [] } = Astro.props;
+const bundleHref = bundle && config.repoUrl
+  ? `${config.repoUrl}/tree/main/content/contributions/${slug}/${bundle}`
+  : null;
+---
+<div class="acts">
+  {bundle && (bundleHref
+    ? <a class="abtn" href={bundleHref}><span class="ic">⇩</span> Replication bundle</a>
+    : <span class="abtn" title="Bundle ships in the content repo — repo URL not configured">⇩ Replication bundle</span>)}
+  {benchmarks.map((b) => <a class="abtn" href="/benchmarks"><span class="ic">⌗</span> {b}</a>)}
+  <button class="abtn" type="button" data-copy="#citation-text"><span class="ic">❝</span> Copy citation</button>
+</div>
+<style>
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; margin: 2px 0 20px; }
+  .ic { color: var(--oxblood); }
+</style>

@@ -1,0 +1,75 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Masthead from "../../components/Masthead.astro";
+import Footer from "../../components/Footer.astro";
+import ActionRow from "../../components/ActionRow.astro";
+import ResultBand from "../../components/ResultBand.astro";
+import CitationBlock from "../../components/CitationBlock.astro";
+import ContentsList from "../../components/ContentsList.astro";
+import Rail from "../../components/Rail.astro";
+import evidence from "../../data/evidence.json";
+import { fmtDate, readTime, tierLabel } from "../../lib/format.mjs";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("contributions", (e) => e.data.status === "published");
+  return entries.map((entry) => ({ params: { slug: entry.id.split("/")[0] }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const slug = entry.id.split("/")[0];
+const fm = entry.data;
+const tier = fm.tier;
+const { Content, headings } = await render(entry);
+const h2s = headings.filter((h) => h.depth === 2);
+const ev = evidence[slug] ?? { replications: [], endorsements: [], rev: null };
+const isNote = tier === "note";
+const showBand = Boolean(fm.result) && (tier === "finding" || tier === "technical-report");
+const verified = ev.replications.filter((r) => r.outcome === "replicated").length;
+---
+<Base title={`${fm.title} · OpenResearch`} description={fm.title}>
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="browse" />
+    <div class={`rgrid ${isNote ? "rgrid-note" : ""}`}>
+      <article class={`art tier-${tier}`} data-pagefind-body
+               data-pagefind-meta={`tier:${tierLabel(tier)}, category:${fm.category}, evidence:${verified} replications`}>
+        <span class="caps" style="color: var(--oxblood)">
+          {tierLabel(tier)} · {fm.category}{isNote && ` · ${fmtDate(fm.updated, "short")} ${fmtDate(fm.updated, "long")}`}
+        </span>
+        <h1 class="font-display rt" transition:name={`title-${slug}`}>{fm.title}</h1>
+        <p class="byline">
+          {fm.authors.map((a, i) => <Fragment>{i > 0 && ", "}<b>{a.name}</b> · {a.team}</Fragment>)}
+          {" "}· {fmtDate(fm.updated, "long")}{!isNote && ` · ${readTime(entry.body)}`}
+        </p>
+        {!isNote && <ActionRow slug={slug} bundle={fm.replication_bundle} benchmarks={fm.benchmarks ?? []} />}
+        {showBand && <ResultBand result={fm.result} detail={fm.result_detail} />}
+        {tier === "technical-report" && <ContentsList headings={h2s} />}
+        <div class="article-body">
+          <Content />
+        </div>
+        {!isNote && <CitationBlock fm={fm} slug={slug} rev={ev.rev} />}
+        {isNote && (
+          <div class="notebar">
+            <span>{verified} replication{verified === 1 ? "" : "s"} yet</span>
+            <a href="/contribute">Tried it? Add evidence →</a>
+          </div>
+        )}
+      </article>
+      {!isNote && <Rail headings={h2s} replications={ev.replications} endorsements={ev.endorsements} />}
+    </div>
+    <Footer />
+  </main>
+</Base>
+<style>
+  .rgrid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(215px, 1fr);
+           gap: 42px; padding-top: 36px; }
+  .rgrid-note { grid-template-columns: minmax(0, 640px); justify-content: center; }
+  @media (max-width: 760px) { .rgrid { grid-template-columns: 1fr; } }
+  .rt { font-weight: 600; font-size: 30px; line-height: 1.15; margin: 10px 0 8px; text-wrap: balance; }
+  .byline { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate); margin-bottom: 20px; }
+  .byline b { color: var(--ink); }
+  .notebar { font-family: system-ui, sans-serif; font-size: 11.5px; color: var(--slate);
+             border-top: 1px solid var(--hairline); margin-top: 24px; padding-top: 12px;
+             display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .notebar a { color: var(--oxblood); text-decoration: none; }
+</style>

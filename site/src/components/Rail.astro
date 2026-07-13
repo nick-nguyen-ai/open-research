@@ -1,0 +1,57 @@
+---
+import { fmtDate } from "../lib/format.mjs";
+const { headings = [], replications = [], endorsements = [] } = Astro.props;
+const verified = replications.filter((r) => r.outcome === "replicated").length;
+const OUTCOME = { replicated: "Verified", partial: "Partial", failed: "Failed" };
+---
+<aside class="rail">
+  {headings.length > 0 && (
+    <nav class="rail-toc" aria-label="On this page">
+      {headings.map((h, i) => (
+        <a href={`#${h.slug}`}><span class="tn">{String(i + 1).padStart(2, "0")}</span>{h.text}</a>
+      ))}
+    </nav>
+  )}
+  {verified > 0 && <div class="rv"><span class="seal">✓ Verified × {verified}</span></div>}
+  {replications.map((r) => (
+    <div class="ann rv">
+      <span class="k">Replication · {r.team}</span>
+      {r.delta && <b>{r.delta}</b>} · {r.benchmark}
+      <div class="d">{fmtDate(r.date, "short")} · <span class="stamp">{OUTCOME[r.outcome] ?? r.outcome}</span></div>
+    </div>
+  ))}
+  {endorsements.map((e) => (
+    <div class="ann rv">
+      <span class="k">{e.type === "adoption" ? "Adoption" : "Endorsement"}</span>
+      <span class="q">“{e.quote}”</span>
+      <div class="d">{e.by} · attributed</div>
+    </div>
+  ))}
+  <div class="railfoot rv">Tried it on your workflow? <a href="/contribute">Submit a replication →</a></div>
+</aside>
+<style>
+  .rail { border-left: 1px solid var(--hairline); padding-left: 24px; display: flex;
+          flex-direction: column; gap: 18px; align-self: start; position: sticky; top: 24px; }
+  .rail-toc { font-family: system-ui, sans-serif; font-size: 12px;
+              border-bottom: 1px solid var(--hairline); padding-bottom: 14px; }
+  .rail-toc a { display: block; text-decoration: none; color: var(--slate); padding: 3px 0; transition: color .2s; }
+  .rail-toc a:hover { color: var(--oxblood); }
+  .rail-toc a[aria-current="true"] { color: var(--ink); font-weight: 600; }
+  .tn { color: var(--oxblood); font-size: 10px; margin-right: 8px; font-variant-numeric: tabular-nums; }
+  .ann { font-family: system-ui, sans-serif; font-size: 12.5px; line-height: 1.55;
+         color: var(--slate); position: relative; }
+  .ann::before { content: ""; position: absolute; left: -25px; top: 7px; width: 8px; height: 8px;
+                 border-radius: 50%; background: var(--paper); border: 2px solid var(--oxblood); }
+  .ann .k { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+            color: var(--oxblood); font-weight: 600; display: block; margin-bottom: 4px; }
+  .ann b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .ann .q { font-family: var(--font-prose); font-style: italic; font-size: 13.5px; color: var(--ink); }
+  .ann .d { font-size: 11px; margin-top: 3px; }
+  .railfoot { font-family: system-ui, sans-serif; font-size: 11.5px; color: var(--slate);
+              border-top: 1px solid var(--hairline); padding-top: 12px; }
+  .railfoot a { color: var(--oxblood); text-decoration: none; }
+  @media (max-width: 760px) {
+    .rail { border-left: none; padding-left: 0; position: static; }
+    .ann::before { display: none; }
+  }
+</style>
