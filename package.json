@@ -1,0 +1,11 @@
+{
+  "name": "openresearch",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "workspaces": ["content/validator"],
+  "scripts": {
+    "validate": "node content/validator/bin/validate.js",
+    "test": "npm test --workspaces"
+  }
+}

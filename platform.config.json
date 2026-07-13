@@ -1,0 +1,6 @@
+{
+  "name": "OpenResearch",
+  "ghHost": "github.com",
+  "repos": { "content": ".", "site": ".", "toolkit": "." },
+  "modelProvider": "claude-code-session"
+}
