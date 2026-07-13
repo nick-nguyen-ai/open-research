@@ -6,6 +6,7 @@ import { check } from "../src/rules/secrets.js";
 const leakyRoot = fileURLToPath(new URL("./fixtures/secrets-root/", import.meta.url));
 const cleanRoot = fileURLToPath(new URL("./fixtures/valid-root/", import.meta.url));
 const dotfileRoot = fileURLToPath(new URL("./fixtures/secrets-dotfile-root/", import.meta.url));
+const nestedValidatorRoot = fileURLToPath(new URL("./fixtures/secrets-nested-validator-root/", import.meta.url));
 
 const bare = (root) => ({
   root, contributions: [], replications: [], endorsements: [], benchmarks: [], errors: []
@@ -40,6 +41,13 @@ test("dot-prefixed directory is still skipped entirely", () => {
   const findings = check(bare(dotfileRoot));
   const hiddenFindings = findings.filter((f) => f.file.replace(/\\/g, "/").includes("/.hidden/"));
   assert.equal(hiddenFindings.length, 0);
+});
+
+test("a directory named 'validator' nested below the content root IS scanned", () => {
+  const findings = check(bare(nestedValidatorRoot));
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].rule, "secrets");
+  assert.match(findings[0].message, /aws-access-key/);
 });
 
 test("private key in a .pem file is detected", () => {

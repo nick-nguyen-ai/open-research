@@ -2,4 +2,4 @@
 useDefault = true
 
 [allowlist]
-paths = ['''content/validator/test/fixtures/''']
+paths = ['''^content/validator/test/fixtures/''']

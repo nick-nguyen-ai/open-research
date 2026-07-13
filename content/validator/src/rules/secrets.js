@@ -17,11 +17,13 @@ const TEXT_EXT = new Set([
   ".pem", ".key", ".crt", ".pub"
 ]);
 
-const SKIP_DIRS = new Set(["node_modules", "validator"]);
+const SKIP_DIRS_ANY_DEPTH = new Set(["node_modules"]);
 
 export function check(content) {
   const findings = [];
-  walk(content.root, (file) => {
+  const validatorDir = join(content.root, "validator");
+  const excludedPaths = new Set([validatorDir]);
+  walk(content.root, excludedPaths, (file) => {
     if (!TEXT_EXT.has(extname(file))) return;
     const lines = readFileSync(file, "utf8").split("\n");
     lines.forEach((line, i) => {
@@ -35,12 +37,12 @@ export function check(content) {
   return findings;
 }
 
-function walk(dir, fn) {
+function walk(dir, excludedPaths, fn) {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) {
-      if (SKIP_DIRS.has(name) || name.startsWith(".")) continue;
-      walk(p, fn);
+      if (SKIP_DIRS_ANY_DEPTH.has(name) || name.startsWith(".") || excludedPaths.has(p)) continue;
+      walk(p, excludedPaths, fn);
     } else {
       fn(p);
     }

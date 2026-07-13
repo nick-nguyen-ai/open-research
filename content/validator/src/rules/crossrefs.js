@@ -1,6 +1,6 @@
 export function check(content) {
   const findings = [];
-  const contributionIds = new Set(content.contributions.map((c) => c.frontmatter.id));
+  const contributionIds = new Set(content.contributions.map((c) => c.frontmatter.id).filter(Boolean));
   const benchmarkIds = new Set(content.benchmarks.map((b) => b.data?.id).filter(Boolean));
 
   const flag = (file, message) => findings.push({ file, rule: "crossref", message });
