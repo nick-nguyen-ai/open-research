@@ -1,0 +1,54 @@
+---
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+---
+<Base title="Contribute · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead />
+    <article class="cwrap">
+      <h1 class="font-display">Publish in under 15 minutes</h1>
+      <p class="lede">Everything on this site is a markdown file merged through a pull request.
+        Pick a tier, copy its template, and open a PR — mechanical CI is the only gate.</p>
+
+      <h2 class="caps" style="color: var(--oxblood)">Pick a tier</h2>
+      <table>
+        <thead><tr><th>Tier</th><th>What it is</th><th>Required sections</th></tr></thead>
+        <tbody>
+          <tr><td><b>Finding</b></td><td>One page, one measured result</td><td>Summary · Context · Technique · Evidence · How to replicate</td></tr>
+          <tr><td><b>Technical report</b></td><td>Long-form study</td><td>Abstract · Background · Method · Results · Discussion · How to replicate</td></tr>
+          <tr><td><b>Tutorial</b></td><td>Hands-on walkthrough</td><td>You'll need · You'll build · Steps · Wrap-up</td></tr>
+          <tr><td><b>Note</b></td><td>One useful observation</td><td>Freeform, 100+ characters</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="caps" style="color: var(--oxblood)">The flow</h2>
+      <ol>
+        <li>Copy the template from <code>content/templates/&lt;tier&gt;.md</code> into
+            <code>content/contributions/&lt;your-slug&gt;/index.md</code> (slug = the <code>id</code> field).</li>
+        <li>Add a <code>bundle/</code> directory with a README if others should be able to replicate it.</li>
+        <li>Run <code>npm run validate</code> locally — CI runs exactly the same checks.</li>
+        <li>Open a PR. Merge = published; git history is your attribution and versioning.</li>
+      </ol>
+
+      <p>From M3, the <a href="/toolkit">toolkit</a> automates all of this: a
+        <code>publish</code> skill turns a braindump into a formatted, validated PR.</p>
+    </article>
+    <Footer />
+  </main>
+</Base>
+<style>
+  .cwrap { max-width: 68ch; padding-top: 40px; }
+  .cwrap h1 { font-weight: 600; font-size: clamp(28px, 4vw, 40px); margin: 0 0 12px; }
+  .lede { font-family: var(--font-display); font-style: italic; font-weight: 500;
+          font-size: 18px; color: var(--ink); margin: 0 0 28px; }
+  .cwrap h2 { margin: 30px 0 12px; }
+  table { border-collapse: collapse; font-size: 14px; display: block; overflow-x: auto; }
+  th, td { border: 1px solid var(--hairline); padding: 8px 14px; text-align: left; }
+  th { font-family: system-ui, sans-serif; font-size: 11px; letter-spacing: .12em;
+       text-transform: uppercase; color: var(--slate); }
+  ol { padding-left: 20px; } li { margin: 8px 0; max-width: 62ch; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .88em; background: var(--soft);
+         border: 1px solid var(--hairline); border-radius: 4px; padding: 1px 5px; }
+  a { color: var(--oxblood); }
+</style>
