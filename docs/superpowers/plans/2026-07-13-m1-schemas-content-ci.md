@@ -1206,7 +1206,7 @@ Create `content/validator/src/rules/crossrefs.js`:
 ```js
 export function check(content) {
   const findings = [];
-  const contributionIds = new Set(content.contributions.map((c) => c.frontmatter.id));
+  const contributionIds = new Set(content.contributions.map((c) => c.frontmatter.id).filter(Boolean));
   const benchmarkIds = new Set(content.benchmarks.map((b) => b.data?.id).filter(Boolean));
 
   const flag = (file, message) => findings.push({ file, rule: "crossref", message });
@@ -1462,11 +1462,14 @@ const TEXT_EXT = new Set([
   ".pem", ".key", ".crt", ".pub"
 ]);
 
-const SKIP_DIRS = new Set(["node_modules", "validator"]);
+const SKIP_DIRS_ANY_DEPTH = new Set(["node_modules"]);
 
 export function check(content) {
   const findings = [];
-  walk(content.root, (file) => {
+  // Only the root-level tooling dir is exempt — a contribution that happens
+  // to be named "validator" must still be scanned.
+  const excludedPaths = new Set([join(content.root, "validator")]);
+  walk(content.root, excludedPaths, (file) => {
     if (!TEXT_EXT.has(extname(file))) return;
     const lines = readFileSync(file, "utf8").split("\n");
     lines.forEach((line, i) => {
@@ -1482,12 +1485,12 @@ export function check(content) {
 
 // Skip logic applies to directories only — dot-prefixed FILES (e.g. .env.yaml)
 // must still be scanned, since that is exactly where secrets tend to hide.
-function walk(dir, fn) {
+function walk(dir, excludedPaths, fn) {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) {
-      if (SKIP_DIRS.has(name) || name.startsWith(".")) continue;
-      walk(p, fn);
+      if (SKIP_DIRS_ANY_DEPTH.has(name) || name.startsWith(".") || excludedPaths.has(p)) continue;
+      walk(p, excludedPaths, fn);
     } else {
       fn(p);
     }
@@ -1842,7 +1845,7 @@ Create `.gitleaks.toml` (the validator's test fixtures contain deliberate fake s
 useDefault = true
 
 [allowlist]
-paths = ['''content/validator/test/fixtures/''']
+paths = ['''^content/validator/test/fixtures/''']
 ```
 
 - [ ] **Step 3: Write the content README**
@@ -1894,6 +1897,14 @@ git commit -m "feat: blocking validate CI workflow, gitleaks config, content doc
 ```
 
 ---
+
+## Execution deltas (recorded during implementation, all reflected in the snippets above)
+
+- Validator test script is bare `node --test` (auto-discovery) — a Node 24 bug breaks the bare-directory form, and shell-glob forms aren't portable to Node-20 CI.
+- Replication schema's `anyOf` carries inert `properties` stubs (Ajv `strictRequired` compile requirement).
+- Secrets rule hardened twice: (1) dotfiles scanned, `.pem/.key/.crt/.pub` added; (2) `validator/` skip scoped to the content root only.
+- broken-root fixture additionally contains `contributions/no-index/` and `records/endorsements/bad.yaml` to exercise the loader's `structure`/`parse` error branches (7 findings total from the CLI, not 5).
+- Final test count: 41, not the sums implied per-task.
 
 ## Verification (end of milestone)
 
