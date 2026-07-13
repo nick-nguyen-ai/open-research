@@ -39,3 +39,11 @@ export function firstSentence(text) {
 export function slugifyHeading(text) {
   return text.toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
+
+// Lowercase-hyphenated person slug used for /people/<handle> routes and Arena handles.
+export function slugifyName(name) {
+  return name.toLowerCase().trim()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}

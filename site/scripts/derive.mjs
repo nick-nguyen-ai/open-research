@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { loadContent } from "@openresearch/validator/load";
-import { firstSentence } from "../src/lib/format.mjs";
+import { firstSentence, slugifyName } from "../src/lib/format.mjs";
 
 function gitRev(file) {
   try {
@@ -176,6 +176,183 @@ export function deriveToolkit(toolkitDir, { repo = null, host = "github.com" } =
   };
 }
 
+// ---- Arena scoring (Cycle 3, CP-C). Point values are contract; see the plan's Global Constraints. ----
+const POINTS = {
+  authored: 10,
+  replicationReceived: 15,
+  replicationPerformed: 12,
+  adoption: 8,
+  adoptionImpactBonus: 4,
+  endorsement: 3
+};
+
+// Builds the full scored model (individuals with detail + counts, teams, divisions), sorted.
+// Exported so derivePeople reuses the exact same scoring. Fails loud on loader errors.
+export function buildScoreModel(content) {
+  if (content.errors && content.errors.length > 0) {
+    const lines = content.errors.map((e) => `${e.file} · ${e.rule} · ${e.message}`);
+    throw new Error(`buildScoreModel: content has errors — run npm run validate\n${lines.join("\n")}`);
+  }
+
+  const published = content.contributions.filter((c) => c.frontmatter.status === "published");
+  const byId = new Map(published.map((c) => [c.frontmatter.id, c]));
+
+  const people = new Map(); // name -> detail
+  const teams = new Map();  // team -> { team, division, score, members:Set, repCount }
+
+  const person = (name) => {
+    if (!people.has(name)) {
+      people.set(name, {
+        name, team: null, division: null, score: 0, repCount: 0,
+        breakdown: { authored: 0, replicationsReceived: 0, replicationsPerformed: 0, adoptions: 0, endorsements: 0 },
+        contributions: [], replicationsPerformed: [], received: []
+      });
+    }
+    return people.get(name);
+  };
+  const teamOf = (t) => {
+    if (!teams.has(t)) teams.set(t, { team: t, division: null, score: 0, members: new Set(), repCount: 0 });
+    return teams.get(t);
+  };
+  // Credit points to a person AND to the team they were on at event time.
+  const credit = (name, team, division, points, repDelta = 0) => {
+    const p = person(name);
+    if (p.team === null) { p.team = team; p.division = division ?? null; } // home team = first crediting event
+    p.score += points;
+    p.repCount += repDelta;
+    const tm = teamOf(team);
+    tm.score += points;
+    tm.repCount += repDelta;
+    tm.members.add(name);
+    if (division != null && tm.division == null) tm.division = division;
+  };
+
+  // Deterministic processing order: authored (by id), then replications, adoptions, endorsements (by file).
+  const sortedPub = [...published].sort((a, b) => a.frontmatter.id.localeCompare(b.frontmatter.id));
+  const byFile = (arr) => [...arr].sort((x, y) => x.file.localeCompare(y.file));
+
+  // 1. Authored
+  for (const c of sortedPub) {
+    const fm = c.frontmatter;
+    const card = { slug: c.dirName, title: fm.title, tier: fm.tier, result: fm.result ?? null };
+    for (const a of fm.authors) {
+      credit(a.name, a.team, a.division, POINTS.authored);
+      const p = person(a.name);
+      p.breakdown.authored += 1;
+      p.contributions.push(card);
+    }
+  }
+
+  // 2. Replications (only outcome=replicated, cross-team score)
+  for (const r of byFile(content.replications)) {
+    const rec = r.data;
+    const c = byId.get(rec.contribution_id);
+    if (!c) continue;
+    if (rec.outcome !== "replicated") continue;
+    const authorTeams = new Set(c.frontmatter.authors.map((a) => a.team));
+    if (authorTeams.has(rec.replicator.team)) continue; // self-team → 0 both sides
+    const benchmark = rec.benchmark_id ?? "own workflow";
+    for (const a of c.frontmatter.authors) {
+      credit(a.name, a.team, a.division, POINTS.replicationReceived, 1);
+      person(a.name).breakdown.replicationsReceived += 1;
+    }
+    credit(rec.replicator.name, rec.replicator.team, rec.replicator.division, POINTS.replicationPerformed, 1);
+    const rp = person(rec.replicator.name);
+    rp.breakdown.replicationsPerformed += 1;
+    rp.replicationsPerformed.push({
+      slug: c.dirName, title: c.frontmatter.title, team: rec.replicator.team,
+      outcome: rec.outcome, delta: rec.measured_delta ?? null, benchmark, date: rec.date
+    });
+  }
+
+  // 3. Adoptions (first-class records)
+  for (const a of byFile(content.adoptions)) {
+    const rec = a.data;
+    const c = byId.get(rec.contribution_id);
+    if (!c) continue;
+    if (rec.status === "retired") continue; // scores 0, not counted
+    const pts = POINTS.adoption + (rec.impact ? POINTS.adoptionImpactBonus : 0);
+    for (const au of c.frontmatter.authors) {
+      credit(au.name, au.team, au.division, pts);
+      const p = person(au.name);
+      p.breakdown.adoptions += 1;
+      p.received.push({
+        kind: "adoption", slug: c.dirName, title: c.frontmatter.title,
+        by: `${rec.adopter.name} · ${rec.adopter.team}`,
+        note: rec.impact ? rec.impact : `${rec.pipeline} · ${rec.status}`, date: rec.date
+      });
+    }
+  }
+
+  // 4. Endorsements (type endorsement = 3; type adoption = 8, counts as adoption)
+  for (const e of byFile(content.endorsements)) {
+    const rec = e.data;
+    const c = byId.get(rec.contribution_id);
+    if (!c) continue;
+    const isAdoption = rec.type === "adoption";
+    const pts = isAdoption ? POINTS.adoption : POINTS.endorsement;
+    for (const au of c.frontmatter.authors) {
+      credit(au.name, au.team, au.division, pts);
+      const p = person(au.name);
+      if (isAdoption) p.breakdown.adoptions += 1; else p.breakdown.endorsements += 1;
+      p.received.push({
+        kind: isAdoption ? "adoption" : "endorsement", slug: c.dirName, title: c.frontmatter.title,
+        by: `${rec.by.name} · ${rec.by.team}`, note: rec.statement, date: rec.date
+      });
+    }
+  }
+
+  const byScore = (keyName) => (a, b) =>
+    b.score - a.score || b.repCount - a.repCount || a[keyName].localeCompare(b[keyName]);
+
+  // Individuals — sort, then assign collision-safe handles.
+  const individuals = [...people.values()].sort(byScore("name"));
+  const seen = new Set();
+  for (const ind of individuals) {
+    const base = slugifyName(ind.name);
+    let handle = base, n = 1;
+    while (seen.has(handle)) { n += 1; handle = `${base}-${n}`; }
+    seen.add(handle);
+    ind.handle = handle;
+  }
+
+  // Teams
+  const teamList = [...teams.values()].map((t) => ({
+    team: t.team, division: t.division, score: t.score, repCount: t.repCount,
+    members: [...t.members].sort((x, y) => x.localeCompare(y))
+  })).sort(byScore("team"));
+
+  // Divisions — exclude teams with no division.
+  const divMap = new Map();
+  for (const t of teamList) {
+    if (t.division == null) continue;
+    if (!divMap.has(t.division)) divMap.set(t.division, { division: t.division, score: 0, repCount: 0, teams: [] });
+    const d = divMap.get(t.division);
+    d.score += t.score;
+    d.repCount += t.repCount;
+    d.teams.push(t.team);
+  }
+  const divisions = [...divMap.values()].map((d) => ({
+    division: d.division, score: d.score, repCount: d.repCount,
+    teams: [...d.teams].sort((x, y) => x.localeCompare(y))
+  })).sort(byScore("division"));
+
+  return { individuals, teams: teamList, divisions };
+}
+
+export function deriveArena(content, { now = () => new Date() } = {}) {
+  const model = buildScoreModel(content);
+  return {
+    individuals: model.individuals.map((i) => ({
+      handle: i.handle, name: i.name, team: i.team, division: i.division, score: i.score,
+      breakdown: { ...i.breakdown }
+    })),
+    teams: model.teams.map((t) => ({ team: t.team, division: t.division, score: t.score, members: t.members })),
+    divisions: model.divisions.map((d) => ({ division: d.division, score: d.score, teams: d.teams })),
+    generated: now().toISOString().slice(0, 10)
+  };
+}
+
 // CLI: node scripts/derive.mjs [contentRoot] [outDir]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const contentRoot = process.argv[2] ?? fileURLToPath(new URL("../../content", import.meta.url));
@@ -191,6 +368,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const platform = JSON.parse(readFileSync(fileURLToPath(new URL("../../platform.config.json", import.meta.url)), "utf8"));
     const toolkit = deriveToolkit(toolkitDir, { repo: platform.repo, host: platform.host });
     writeFileSync(join(outDir, "toolkit.json"), JSON.stringify(toolkit, null, 2));
+    const arenaContent = loadContent(contentRoot);
+    const arena = deriveArena(arenaContent);
+    writeFileSync(join(outDir, "arena.json"), JSON.stringify(arena, null, 2));
     console.log(`derive: ${stats.contributions} contributions → ${outDir}`);
   } catch (err) {
     console.error(err.message);
