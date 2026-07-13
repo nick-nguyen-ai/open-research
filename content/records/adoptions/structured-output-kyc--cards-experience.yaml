@@ -1,0 +1,10 @@
+contribution_id: structured-output-kyc
+adopter:
+  name: Liam Fitzgerald
+  team: cards-experience
+  division: Cards
+pipeline: cards-kyc-extraction
+status: active
+since: 2026-07-06
+impact: removed 400 lines of regex post-processing from the extraction path
+date: 2026-07-12
