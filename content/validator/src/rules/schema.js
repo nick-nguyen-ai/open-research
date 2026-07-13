@@ -21,6 +21,7 @@ export function check(content) {
   checkGroup(content.replications, "replication", findings);
   checkGroup(content.endorsements, "endorsement", findings);
   checkGroup(content.benchmarks, "benchmark", findings);
+  checkGroup(content.adoptions ?? [], "adoption", findings);
   return findings;
 }
 

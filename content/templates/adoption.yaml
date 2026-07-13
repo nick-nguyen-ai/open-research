@@ -1,0 +1,14 @@
+# Adoption record — one team running someone else's contribution in a real pipeline.
+# Place at: content/records/adoptions/<contribution-id>--<team>.yaml
+# The validator checks: schema (this shape) + crossref (contribution_id must resolve).
+
+contribution_id: some-contribution-id   # required — must match a published contribution's id
+adopter:                                # required — the team/person running it
+  name: Full Name
+  team: your-team                       # e.g. markets-analytics
+  division: Your Division               # optional but recommended (feeds the Arena divisions board)
+pipeline: where-it-runs                 # required — the pipeline/surface it runs in
+status: active                          # required — active | trialing | retired
+since: 2026-07-01                       # required — when adoption began (YYYY-MM-DD)
+impact: one measured line, e.g. "-40% manual review"   # optional — recording it earns a scoring bonus
+date: 2026-07-14                        # required — record date (YYYY-MM-DD)
