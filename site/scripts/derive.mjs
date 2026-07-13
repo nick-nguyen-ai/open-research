@@ -392,6 +392,31 @@ export function deriveWatchlist(content) {
   return rows;
 }
 
+// ---- Benchmark registry (Cycle 4, CP-D). Additive derive output. ----
+export function deriveBenchmarks(content) {
+  const published = content.contributions.filter((c) => c.frontmatter.status === "published");
+  const publishedIds = new Set(published.map((c) => c.frontmatter.id));
+  return content.benchmarks.map((b) => {
+    const bm = b.data;
+    const contributions = published
+      .filter((c) => (c.frontmatter.benchmarks ?? []).includes(bm.id))
+      .map((c) => ({ slug: c.dirName, title: c.frontmatter.title }));
+    const replications = content.replications
+      .map((r) => r.data)
+      .filter((r) => r.benchmark_id === bm.id && publishedIds.has(r.contribution_id))
+      .map((r) => ({ slug: r.contribution_id, team: r.replicator.team, outcome: r.outcome, delta: r.measured_delta ?? null, date: r.date }));
+    return {
+      id: bm.id,
+      owner: { name: bm.owner.name, team: bm.owner.team },
+      description: bm.description,
+      data_pointer: bm.data_pointer,
+      metrics: (bm.metrics ?? []).map((m) => ({ name: m.name, definition: m.definition, higher_is_better: m.higher_is_better ?? null })),
+      contributions,
+      replications
+    };
+  }).sort((a, b) => a.id.localeCompare(b.id));
+}
+
 // CLI: node scripts/derive.mjs [contentRoot] [outDir]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const contentRoot = process.argv[2] ?? fileURLToPath(new URL("../../content", import.meta.url));
@@ -413,6 +438,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const people = derivePeople(arenaContent);
     writeFileSync(join(outDir, "people.json"), JSON.stringify(people, null, 2));
     writeFileSync(join(outDir, "watchlist.json"), JSON.stringify(deriveWatchlist(arenaContent), null, 2));
+    writeFileSync(join(outDir, "benchmarks.json"), JSON.stringify(deriveBenchmarks(arenaContent), null, 2));
     console.log(`derive: ${stats.contributions} contributions → ${outDir}`);
   } catch (err) {
     console.error(err.message);
