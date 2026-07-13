@@ -1,0 +1,18 @@
+contribution_id: heading-aware-chunking
+replicator:
+  name: Fable
+  team: platform-lab
+workflow: OpenResearch repo markdown corpus (29 docs) retrieved with the platform's own BM25 engine
+method: Implemented the tutorial's depth-2 split / 200-token merge / 800-token cap chunker and compared it against fixed 800-token windows on 30 heading-derived queries at recall@10, identical BM25 retrieval both sides.
+outcome: partial
+measured_delta: recall@10 +0pt (parity) · chunk count −66% at equal recall
+metrics:
+  - name: recall@10
+    baseline: 1.0
+    treatment: 1.0
+  - name: chunks
+    baseline: 104
+    treatment: 35
+artifacts: content/contributions/using-openresearch/bundle/
+notes: The tutorial's +11pt gain did not transfer to a short-document corpus — most docs fit inside a single 800-token window, so there is no heading/body split for the technique to repair. The structural win that did transfer is index size, one third the chunks at equal recall.
+date: 2026-07-14
