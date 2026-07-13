@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Benchmark registry entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "owner", "description", "data_pointer", "metrics"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "owner": { "$ref": "#/definitions/person" },
+    "description": { "type": "string", "minLength": 20 },
+    "data_pointer": { "type": "string", "minLength": 1 },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "definition"],
+        "properties": {
+          "name": { "type": "string" },
+          "definition": { "type": "string", "minLength": 10 },
+          "higher_is_better": { "type": "boolean" }
+        }
+      }
+    },
+    "access_notes": { "type": "string" }
+  },
+  "definitions": {
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "team"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "team": { "type": "string", "minLength": 1 },
+        "division": { "type": "string" }
+      }
+    }
+  }
+}

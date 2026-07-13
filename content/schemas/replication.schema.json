@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Replication record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contribution_id", "replicator", "method", "outcome", "date"],
+  "anyOf": [
+    { "required": ["benchmark_id"], "properties": { "benchmark_id": {} } },
+    { "required": ["workflow"], "properties": { "workflow": {} } }
+  ],
+  "properties": {
+    "contribution_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "replicator": { "$ref": "#/definitions/person" },
+    "benchmark_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "workflow": { "type": "string", "minLength": 10 },
+    "method": { "type": "string", "minLength": 20 },
+    "outcome": { "enum": ["replicated", "partial", "failed"] },
+    "measured_delta": { "type": "string" },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "baseline", "treatment"],
+        "properties": {
+          "name": { "type": "string" },
+          "baseline": { "type": "number" },
+          "treatment": { "type": "number" }
+        }
+      }
+    },
+    "date": { "type": "string", "format": "date" },
+    "artifacts": { "type": "string" },
+    "notes": { "type": "string" }
+  },
+  "definitions": {
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "team"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "team": { "type": "string", "minLength": 1 },
+        "division": { "type": "string" }
+      }
+    }
+  }
+}

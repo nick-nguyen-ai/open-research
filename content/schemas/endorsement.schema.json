@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Endorsement or adoption record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contribution_id", "type", "by", "statement", "date"],
+  "properties": {
+    "contribution_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "type": { "enum": ["endorsement", "adoption"] },
+    "by": { "$ref": "#/definitions/person" },
+    "statement": { "type": "string", "minLength": 20, "maxLength": 1000 },
+    "pipeline": { "type": "string" },
+    "date": { "type": "string", "format": "date" }
+  },
+  "definitions": {
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "team"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "team": { "type": "string", "minLength": 1 },
+        "division": { "type": "string" }
+      }
+    }
+  }
+}
