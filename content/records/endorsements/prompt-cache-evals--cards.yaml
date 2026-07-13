@@ -1,0 +1,8 @@
+contribution_id: prompt-cache-evals
+type: adoption
+by:
+  name: Grace
+  team: Cards
+statement: Adopted in our nightly eval pipeline; savings match the reported numbers.
+pipeline: cards-nightly-evals
+date: 2026-07-21

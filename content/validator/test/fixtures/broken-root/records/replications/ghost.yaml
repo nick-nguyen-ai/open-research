@@ -1,0 +1,8 @@
+contribution_id: ghost-contribution
+replicator:
+  name: Ada
+  team: Payments Engineering
+workflow: our internal triage eval harness
+method: Attempted to replicate a contribution that does not exist here.
+outcome: failed
+date: 2026-07-05

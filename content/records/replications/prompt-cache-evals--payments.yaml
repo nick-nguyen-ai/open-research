@@ -1,0 +1,9 @@
+contribution_id: prompt-cache-evals
+replicator:
+  name: Ada
+  team: Payments Engineering
+benchmark_id: internal-eval-suite
+method: Re-ran the bundle against our payments eval set with cache enabled.
+outcome: replicated
+measured_delta: eval cost -55%, latency unchanged
+date: 2026-07-20
