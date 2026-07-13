@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import BrowseFilter from "../components/islands/BrowseFilter.jsx";
+import cards from "../data/cards.json";
+import filters from "../data/filters.json";
+---
+<Base title="Browse · OpenResearch">
+  <main class="max-w-[1080px] mx-auto px-6 pt-8">
+    <Masthead active="browse" />
+    <h1 class="font-display bh">Browse the record</h1>
+    <BrowseFilter client:load cards={cards} filters={filters} />
+    <Footer />
+  </main>
+</Base>
+<style>
+  .bh { font-weight: 600; font-size: 30px; margin: 36px 0 18px; }
+  main :global(.bf-row) { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  main :global(.bf-sep) { width: 1px; height: 18px; background: var(--hairline); margin: 0 4px; }
+  main :global(.bf-count) { padding: 14px 0 0; }
+  main :global(.bf-grid) { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--hairline); margin-top: 12px; }
+  main :global(.bf-grid .card:nth-child(odd)) { border-right: 1px solid var(--hairline); }
+  @media (max-width: 720px) {
+    main :global(.bf-grid) { grid-template-columns: 1fr; }
+    main :global(.bf-grid .card:nth-child(odd)) { border-right: none; }
+  }
+</style>
