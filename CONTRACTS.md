@@ -8,7 +8,7 @@ Registry maintained per [`docs/superpowers/plans/2026-07-14-m2-m8-master-plan.md
 
 | Contract | Definition lives at | Notes |
 |---|---|---|
-| Contribution frontmatter schema | `content/schemas/contribution.schema.json` | 4 tiers (`finding`, `technical-report`, `tutorial`, `note`); optional `result` (3–80 chars) / `result_detail` (≤160) |
+| Contribution frontmatter schema | `content/schemas/contribution.schema.json` | 5 tiers (`finding`, `technical-report`, `research-paper`, `tutorial`, `note` — `research-paper` added post-CP-E, additive); optional `result` (3–80 chars) / `result_detail` (≤160) |
 | Replication record shape | `content/schemas/replication.schema.json` | `anyOf benchmark_id \| workflow` |
 | Endorsement record shape | `content/schemas/endorsement.schema.json` | |
 | Benchmark registry entry shape | `content/schemas/benchmark.schema.json` | `id/owner{name,team}/description/data_pointer/metrics[]` |

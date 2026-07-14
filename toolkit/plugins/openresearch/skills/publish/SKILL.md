@@ -21,7 +21,7 @@ local branch + commit and print the exact commands a human runs later.
    - Else offer the tier templates and scaffold:
      `mkdir -p content/contributions/<id>` then copy the chosen tier, e.g.
      `cp content/templates/finding.md content/contributions/<id>/index.md`
-     (tiers: `finding`, `technical-report`, `tutorial`, `note`). Fill `id`, `title`,
+     (tiers: `finding`, `technical-report`, `research-paper`, `tutorial`, `note`). Fill `id`, `title`,
      `authors`, dates; set `status: published` when ready.
 2. **Validate (blocking).** Run exactly: `npm run validate`
    - On failure, the validator prints `path  [rule]  message` lines. Present each as

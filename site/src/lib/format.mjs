@@ -1,6 +1,7 @@
 const TIER_LABELS = {
   finding: "Finding",
   "technical-report": "Technical report",
+  "research-paper": "Research paper",
   tutorial: "Tutorial",
   note: "Note"
 };
