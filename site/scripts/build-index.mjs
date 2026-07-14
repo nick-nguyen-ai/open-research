@@ -37,7 +37,9 @@ export function chunkContent(content) {
 }
 
 function splitSections(body) {
-  const lines = body.split("\n");
+  // Normalize line endings: the committed index must not depend on whether
+  // the working tree was checked out with LF or CRLF.
+  const lines = body.replace(/\r\n/g, "\n").split("\n");
   const out = [];
   let cur = null;
   for (const line of lines) {
