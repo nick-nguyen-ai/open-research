@@ -87,9 +87,9 @@ const byTier = TIER_ORDER
       <b>publish</b> skill a braindump and let it scaffold the right tier for you.</p>
     <div class="gallery rv">
       {byTier.map((g) => (
-        <div class="tier-group">
+        <div class="tier-group" data-tier={g.tier}>
           <div class="tier-head">
-            <span class="caps">{g.label}</span>
+            <span class="caps" style="color: var(--tier)">{g.label}</span>
             <span class="tier-count">{g.items.length}</span>
           </div>
           <ul class="tier-list">
@@ -130,7 +130,7 @@ const byTier = TIER_ORDER
   .demo-link { justify-self: end; font-size: 13.5px; color: var(--oxblood); text-decoration: none; white-space: nowrap; }
   .demo-link:hover { text-decoration: underline; }
   .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; margin-bottom: 8px; }
-  .tier-group { border-top: 2px solid var(--ink); padding-top: 10px; }
+  .tier-group { border-top: 3px solid var(--tier, var(--ink)); padding-top: 10px; }
   .tier-head { display: flex; align-items: baseline; justify-content: space-between; }
   .tier-count { font-size: 12px; color: var(--slate); font-variant-numeric: tabular-nums; }
   .tier-list { list-style: none; margin: 8px 0 0; padding: 0; }
@@ -141,7 +141,7 @@ const byTier = TIER_ORDER
   .install { margin: 34px 0 8px; }
   @media (max-width: 640px) { .demo-link { justify-self: start; } }
   .cmd { display: flex; align-items: center; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
-  .cmd .kbd { font-size: 13px; padding: 7px 12px; }
+  .cmd .kbd { font-size: 14px; padding: 8px 14px; color: var(--ink); }
   .cmd-or { margin: 14px 0 2px; }
   @media (max-width: 640px) { .skill { grid-template-columns: 1fr; gap: 4px; } .skill-tag { justify-self: start; } }
 </style>

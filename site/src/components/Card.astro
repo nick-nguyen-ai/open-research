@@ -2,13 +2,13 @@
 import { tierLabel } from "../lib/format.mjs";
 const { card } = Astro.props;
 ---
-<a class="card rv" href={`/contributions/${card.slug}`}>
-  <span class="caps" style="color: var(--oxblood)">{tierLabel(card.tier)} · {card.category}</span>
+<a class="card rv" href={`/contributions/${card.slug}`} data-tier={card.tier}>
+  <span class="caps"><span class="card-tierword">{tierLabel(card.tier)}</span> · {card.category}</span>
   <h3 transition:name={`title-${card.slug}`}>{card.title}</h3>
+  {card.result && <div class="card-result">{card.result}</div>}
   <p class="card-summary">{card.summary}</p>
   <div class="card-ev">
-    <span><b>{card.replications}</b> replication{card.replications === 1 ? "" : "s"}</span>
+    <span class={card.replications > 0 ? "ev-verified" : ""}><b>{card.replications}</b> replication{card.replications === 1 ? "" : "s"}</span>
     <span><b>{card.teams}</b> team{card.teams === 1 ? "" : "s"}</span>
-    {card.result && <span><b>{card.result}</b></span>}
   </div>
 </a>
