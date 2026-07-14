@@ -15,6 +15,7 @@ const items = [
         <a href={i.href} aria-current={active === i.key ? "page" : undefined}>{i.label}</a>
       ))}
     </nav>
+    <a class="cta" href="/contribute" aria-current={active === "contribute" ? "page" : undefined}>Contribute</a>
     <button class="kbd" type="button" data-search-open aria-label="Search">⌘K</button>
     <button class="mode" type="button" data-theme-toggle aria-label="Toggle dark mode">◐</button>
   </div>
@@ -39,6 +40,12 @@ const items = [
           border-bottom: 2px solid transparent; padding-bottom: 2px;
           transition: color .25s, border-color .25s; }
   nav a:hover, nav a:focus-visible, nav a[aria-current="page"] { color: var(--oxblood); border-color: var(--oxblood); outline: none; }
+  /* The one action among the reading links: reading is grey, doing is oxblood. */
+  .cta { font-family: system-ui, sans-serif; font-size: 12.5px; letter-spacing: .08em;
+         text-transform: uppercase; text-decoration: none; color: var(--oxblood);
+         border: 1px solid var(--oxblood); padding: 3px 10px 4px;
+         transition: background-color .25s, color .25s; }
+  .cta:hover, .cta:focus-visible, .cta[aria-current="page"] { background: var(--oxblood); color: var(--paper); outline: none; }
   .kbd, .mode { cursor: pointer; }
   .mode { background: none; border: none; color: var(--slate); font-size: 15px; }
   .mode:hover { color: var(--oxblood); }
