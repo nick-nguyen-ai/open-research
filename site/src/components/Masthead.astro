@@ -1,5 +1,5 @@
 ---
-const { active = "" } = Astro.props;
+const { active = "", home = false } = Astro.props;
 const items = [
   { href: "/browse", label: "Browse", key: "browse" },
   { href: "/benchmarks", label: "Benchmarks", key: "benchmarks" },
@@ -7,7 +7,7 @@ const items = [
   { href: "/toolkit", label: "Toolkit", key: "toolkit" }
 ];
 ---
-<header class="mast">
+<header class={`mast ${home ? "mast-home" : ""}`}>
   <a class="logo font-display" href="/">Open<em>Research</em></a>
   <div class="right">
     <nav aria-label="Primary">
@@ -27,7 +27,10 @@ const items = [
                  border-bottom: 2px solid var(--ink); transform-origin: left;
                  animation: ruledraw .7s cubic-bezier(.2,.6,.2,1) both; }
   @keyframes ruledraw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  .logo { font-weight: 600; font-size: 21px; text-decoration: none; color: inherit; }
+  .logo { font-weight: 600; font-size: 26px; letter-spacing: -0.01em;
+          text-decoration: none; color: inherit; }
+  /* The homepage is the front page — the nameplate gets full masthead treatment. */
+  .mast-home .logo { font-size: 37px; letter-spacing: -0.015em; }
   .logo em { font-style: italic; font-weight: 500; color: var(--oxblood); }
   .right { display: flex; gap: 18px; align-items: baseline; }
   nav { display: flex; gap: 22px; }
