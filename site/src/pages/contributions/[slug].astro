@@ -34,10 +34,10 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
   <main class="max-w-[1080px] mx-auto px-6 pt-8">
     <Masthead active="browse" />
     <div class={`rgrid ${isNote ? "rgrid-note" : ""}`}>
-      <article class={`art tier-${tier}`} data-pagefind-body
+      <article class={`art tier-${tier}`} data-tier={tier} data-pagefind-body
                data-pagefind-meta={`tier:${tierLabel(tier)}, category:${fm.category}, evidence:${verified} replications`}>
-        <span class="caps" style="color: var(--oxblood)">
-          {tierLabel(tier)} · {fm.category}{isNote && ` · ${fmtDate(fm.updated, "full")}`}
+        <span class="caps">
+          <span class="tierword">{tierLabel(tier)}</span> · {fm.category}{isNote && ` · ${fmtDate(fm.updated, "full")}`}
         </span>
         <h1 class="font-display rt" transition:name={`title-${slug}`}>{fm.title}</h1>
         <p class="byline">
@@ -74,6 +74,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
   .rgrid-note { grid-template-columns: minmax(0, 640px); justify-content: center; }
   @media (max-width: 760px) { .rgrid { grid-template-columns: 1fr; } }
   .rt { font-weight: 600; font-size: 30px; line-height: 1.15; margin: 10px 0 8px; text-wrap: balance; }
+  .tierword { color: var(--tier, var(--slate)); }
   .byline { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate); margin-bottom: 20px; }
   .byline b { color: var(--ink); }
   .byline a.pl { color: inherit; text-decoration: none; border-bottom: 1px solid var(--hairline); }

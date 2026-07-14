@@ -18,7 +18,7 @@ const OUTCOME = { replicated: "Verified", partial: "Partial", failed: "Failed" }
     <div class="ann rv">
       <span class="k">Replication · {r.team}</span>
       {r.delta && <b>{r.delta}</b>} · {r.benchmark}
-      <div class="d">{fmtDate(r.date, "short")} · <span class="stamp">{OUTCOME[r.outcome] ?? r.outcome}</span></div>
+      <div class="d">{fmtDate(r.date, "short")} · <span class={r.outcome === "replicated" ? "seal" : "stamp"}>{OUTCOME[r.outcome] ?? r.outcome}</span></div>
     </div>
   ))}
   {adoptions.map((a) => (
@@ -52,9 +52,9 @@ const OUTCOME = { replicated: "Verified", partial: "Partial", failed: "Failed" }
   .ann { font-family: system-ui, sans-serif; font-size: 12.5px; line-height: 1.55;
          color: var(--slate); position: relative; }
   .ann::before { content: ""; position: absolute; left: -25px; top: 7px; width: 8px; height: 8px;
-                 border-radius: 50%; background: var(--paper); border: 2px solid var(--oxblood); }
+                 border-radius: 50%; background: var(--paper); border: 2px solid var(--verified); }
   .ann .k { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
-            color: var(--oxblood); font-weight: 600; display: block; margin-bottom: 4px; }
+            color: var(--verified); font-weight: 600; display: block; margin-bottom: 4px; }
   .ann b { color: var(--ink); font-variant-numeric: tabular-nums; }
   .ann .q { font-family: var(--font-prose); font-style: italic; font-size: 13.5px; color: var(--ink); }
   .ann .pl { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--ink); }

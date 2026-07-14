@@ -6,7 +6,7 @@ const { result, detail } = Astro.props;
   {detail && <div class="sub">{detail}</div>}
 </div>
 <style>
-  .result { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--hairline);
+  .result { border-top: 3px solid var(--tier, var(--ink)); border-bottom: 1px solid var(--hairline);
             padding: 18px 0 16px; margin: 0 0 24px; }
   .big { font-weight: 600; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.05;
          font-variant-numeric: tabular-nums; }
