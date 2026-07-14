@@ -1,0 +1,12 @@
+id: llmlingua-2
+title: "LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression"
+source_url: https://arxiv.org/abs/2403.12968
+venue: ACL 2024 Findings
+added_by:
+  name: Priyanka Nair
+  team: ib-quant
+status: tested
+claimed_by:
+  name: Priyanka Nair
+  team: ib-quant
+resulting_contribution: prompt-compression-long-context

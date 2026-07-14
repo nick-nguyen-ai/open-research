@@ -50,6 +50,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       "/contributions/batch-inference-queueing/", "/contributions/prompt-regression-harness/",
       "/contributions/context-window-budgeting/", "/contributions/eval-rubric-drift/",
       "/contributions/using-openresearch/", "/contributions/openwiki-repo-indexing/",
+      "/contributions/speculative-decoding-latency/", "/contributions/prompt-compression-long-context/",
       "/people/sofia-marchetti/", "/people/fable/",
     ]
   });

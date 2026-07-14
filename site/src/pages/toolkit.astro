@@ -3,9 +3,30 @@ import Base from "../layouts/Base.astro";
 import Masthead from "../components/Masthead.astro";
 import Footer from "../components/Footer.astro";
 import toolkit from "../data/toolkit.json";
+import cards from "../data/cards.json";
+import { tierLabel } from "../lib/format.mjs";
 
 const shipped = toolkit.skills.filter((s) => !s.shipsIn);
 const upcoming = toolkit.skills.filter((s) => s.shipsIn);
+
+// Real artifacts the plugin's skills produced on this site (CP-E acceptance run).
+const demos = [
+  { skill: "paper-reader", note: "Read heading-aware-chunking down to its evidence panel — the structured read that kicked off the tutorial.",
+    href: "/contributions/using-openresearch/", label: "using-openresearch" },
+  { skill: "write-replication", note: "Turned a real rerun into the honest partial replication now on the original's evidence panel.",
+    href: "/contributions/heading-aware-chunking/", label: "heading-aware-chunking" },
+  { skill: "judge", note: "Advisory review caught a claims-vs-evidence gap in this report's Results section before publishing.",
+    href: "/contributions/openwiki-repo-indexing/", label: "openwiki-repo-indexing" },
+  { skill: "publish", note: "Validated, judged, branched contribute/<id>, and merged both acceptance contributions you can read here.",
+    href: "/contributions/using-openresearch/", label: "using-openresearch" },
+  { skill: "MCP server", note: "openresearch_answer cites sections of the corpus — every published page below is in its index.",
+    href: "/browse/", label: "browse the corpus" },
+];
+
+const TIER_ORDER = ["finding", "technical-report", "research-paper", "tutorial", "note"];
+const byTier = TIER_ORDER
+  .map((t) => ({ tier: t, label: tierLabel(t), items: cards.filter((c) => c.tier === t) }))
+  .filter((g) => g.items.length > 0);
 ---
 <Base title="Toolkit · OpenResearch">
   <main class="max-w-[1080px] mx-auto px-6 pt-8">
@@ -47,6 +68,39 @@ const upcoming = toolkit.skills.filter((s) => s.shipsIn);
       ))}
     </div>
 
+    <div class="seclab rv"><span class="caps" style="color: var(--oxblood)">See it in action</span></div>
+    <p class="rv seclede">Every skill has already been run for real against this site. Each row links to the
+      live artifact it produced or touched — no staged screenshots.</p>
+    <div class="skills rv">
+      {demos.map((d) => (
+        <div class="skill">
+          <div class="skill-name font-display">{d.skill}</div>
+          <div class="skill-purpose">{d.note}</div>
+          <a class="demo-link" href={d.href}>{d.label} →</a>
+        </div>
+      ))}
+    </div>
+
+    <div class="seclab rv"><span class="caps" style="color: var(--oxblood)">Sample gallery</span></div>
+    <p class="rv seclede">One template per tier under <code class="kbd" style="font-size:12px; padding:2px 6px;">content/templates/</code> —
+      these published samples show what each one becomes. Copy a template, or hand the
+      <b>publish</b> skill a braindump and let it scaffold the right tier for you.</p>
+    <div class="gallery rv">
+      {byTier.map((g) => (
+        <div class="tier-group">
+          <div class="tier-head">
+            <span class="caps">{g.label}</span>
+            <span class="tier-count">{g.items.length}</span>
+          </div>
+          <ul class="tier-list">
+            {g.items.map((c) => (
+              <li><a href={`/contributions/${c.slug}/`}>{c.title}</a>{c.result && <span class="tier-result">{c.result}</span>}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
     <section class="install rv">
       <p class="caps" style="color: var(--oxblood)">Install</p>
       <div class="cmd">
@@ -72,7 +126,20 @@ const upcoming = toolkit.skills.filter((s) => s.shipsIn);
   .skill-purpose { color: var(--slate); font-size: 14.5px; }
   .skill-upcoming .skill-name, .skill-upcoming .skill-purpose { opacity: .62; }
   .skill-tag { justify-self: end; }
+  .seclede { color: var(--slate); font-size: 14.5px; max-width: 62ch; margin: 8px 0 14px; }
+  .demo-link { justify-self: end; font-size: 13.5px; color: var(--oxblood); text-decoration: none; white-space: nowrap; }
+  .demo-link:hover { text-decoration: underline; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; margin-bottom: 8px; }
+  .tier-group { border-top: 2px solid var(--ink); padding-top: 10px; }
+  .tier-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .tier-count { font-size: 12px; color: var(--slate); font-variant-numeric: tabular-nums; }
+  .tier-list { list-style: none; margin: 8px 0 0; padding: 0; }
+  .tier-list li { padding: 7px 0; border-bottom: 1px solid var(--hairline); font-size: 14.5px; line-height: 1.4; }
+  .tier-list a { color: var(--ink); text-decoration: none; }
+  .tier-list a:hover { color: var(--oxblood); text-decoration: underline; }
+  .tier-result { display: block; font-size: 12.5px; color: var(--oxblood); margin-top: 2px; }
   .install { margin: 34px 0 8px; }
+  @media (max-width: 640px) { .demo-link { justify-self: start; } }
   .cmd { display: flex; align-items: center; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
   .cmd .kbd { font-size: 13px; padding: 7px 12px; }
   .cmd-or { margin: 14px 0 2px; }
