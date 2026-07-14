@@ -146,8 +146,9 @@ html:not(.js) .rv { opacity: 1; transform: none; } /* no JS = fully visible */
   border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;
 }
 
-/* ---- tier: technical-report / note — italic lede ---- */
+/* ---- tier: technical-report / research-paper / note — italic lede ---- */
 .tier-technical-report .article-body [data-section="abstract"] > p:first-of-type,
+.tier-research-paper .article-body [data-section="abstract"] > p:first-of-type,
 .tier-note .article-body > p:first-of-type {
   font-family: var(--font-display); font-style: italic; font-weight: 500;
   font-size: 18px; line-height: 1.5; color: var(--ink);

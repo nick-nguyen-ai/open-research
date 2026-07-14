@@ -27,7 +27,7 @@ const h2s = headings.filter((h) => h.depth === 2);
 const ev = evidence[slug] ?? { replications: [], endorsements: [], adoptions: [], changelog: [], rev: null };
 const adoptions = ev.adoptions ?? [];
 const isNote = tier === "note";
-const showBand = Boolean(fm.result) && (tier === "finding" || tier === "technical-report");
+const showBand = Boolean(fm.result) && (tier === "finding" || tier === "technical-report" || tier === "research-paper");
 const verified = ev.replications.filter((r) => r.outcome === "replicated").length;
 ---
 <Base title={`${fm.title} · OpenResearch`} description={fm.title}>
@@ -46,7 +46,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
         </p>
         {!isNote && <ActionRow slug={slug} bundle={fm.replication_bundle} benchmarks={fm.benchmarks ?? []} />}
         {showBand && <ResultBand result={fm.result} detail={fm.result_detail} />}
-        {tier === "technical-report" && <ContentsList headings={h2s} />}
+        {(tier === "technical-report" || tier === "research-paper") && <ContentsList headings={h2s} />}
         <div class="article-body">
           <Content />
         </div>

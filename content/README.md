@@ -14,7 +14,7 @@ The site in `site/` renders this directory; run `npm run site:build` at the repo
 | `records/replications/` | Replication records (YAML), one file per replication. |
 | `records/endorsements/` | Endorsement/adoption records (YAML). |
 | `benchmarks/` | Shared benchmark registry entries (YAML). |
-| `templates/` | Copy one of these to start a contribution (`finding`, `technical-report`, `tutorial`, `note`). |
+| `templates/` | Copy one of these to start a contribution (`finding`, `technical-report`, `research-paper`, `tutorial`, `note`). |
 | `validator/` | The validation CLI used by both CI and the publish skill. |
 
 ## Validating locally

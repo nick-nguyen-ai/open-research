@@ -7,7 +7,7 @@
   "properties": {
     "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 80 },
     "title": { "type": "string", "minLength": 8, "maxLength": 120 },
-    "tier": { "enum": ["finding", "technical-report", "tutorial", "note"] },
+    "tier": { "enum": ["finding", "technical-report", "research-paper", "tutorial", "note"] },
     "authors": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/person" } },
     "category": { "enum": ["evals", "prompting", "agents", "rag", "fine-tuning", "tooling", "governance", "other"] },
     "tags": {

@@ -41,9 +41,18 @@ test("note requires no headings but rejects near-empty body", () => {
   assert.match(findings[0].message, /under 100 characters/);
 });
 
+test("research-paper requires the full paper skeleton", () => {
+  const paper = REQUIRED_HEADINGS["research-paper"].map((h) => `## ${h}\nSubstantial section text here.`).join("\n");
+  assert.deepEqual(check(contribution("research-paper", paper)), []);
+  const noRelated = paper.replace("## Related work", "## Prior art");
+  const findings = check(contribution("research-paper", noRelated));
+  assert.equal(findings.length, 1);
+  assert.match(findings[0].message, /"## Related work"/);
+});
+
 test("every tier has a headings entry", () => {
   assert.deepEqual(
     Object.keys(REQUIRED_HEADINGS).sort(),
-    ["finding", "note", "technical-report", "tutorial"]
+    ["finding", "note", "research-paper", "technical-report", "tutorial"]
   );
 });

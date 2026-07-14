@@ -14,9 +14,10 @@ test("readTime floors at 1 minute, 220 wpm", () => {
   assert.equal(readTime("word ".repeat(900)), "4 min read");
 });
 
-test("tierLabel maps all four tiers", () => {
+test("tierLabel maps all five tiers", () => {
   assert.equal(tierLabel("finding"), "Finding");
   assert.equal(tierLabel("technical-report"), "Technical report");
+  assert.equal(tierLabel("research-paper"), "Research paper");
   assert.equal(tierLabel("tutorial"), "Tutorial");
   assert.equal(tierLabel("note"), "Note");
 });
