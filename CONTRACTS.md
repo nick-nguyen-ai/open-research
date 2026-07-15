@@ -59,6 +59,19 @@ Registry maintained per [`docs/superpowers/plans/2026-07-14-m2-m8-master-plan.md
 | Discussions config key | `platform.config.json` `discussions.enabled` | Additive key (default false); `config.discussionsEnabled` gates `Discussions.astro`; no external requests when off. Plugin `plugin.json` version anchor is now `0.4.0` |
 | Routes | `site/src/pages/` | Adds `/watchlist`, `/digest`; `/benchmarks` is now a real registry. Masthead nav stays 4 items + search |
 
+## Frozen at CP-F (review process, 2026-07-15)
+
+| Contract | Definition lives at | Notes |
+|---|---|---|
+| Review record shape | `content/schemas/review.schema.json` | `{ contribution_id, reviewer(kind: human{name,team,…} \| llm-judge{model}), verdicts{clarity, claims_vs_evidence, reproducibility: strong\|adequate\|needs-work}, statement, suggestions?≤5, override?{by,reason,date}, date }`; file at `content/records/reviews/<id>--<reviewer-slug>.yaml` (judge slug = `judge`) |
+| Review rule | `content/validator/src/rules/reviews.js` | `override` requires ≥1 `needs-work` verdict; crossref covers review `contribution_id` |
+| Loader reviews array | `@openresearch/validator/load` → `loadContent(root)` | Return object gains `reviews: [{file,data}]` (additive); existing keys unchanged |
+| Extended evidence + cards | `site/scripts/derive.mjs` | `evidence[slug]` gains `reviews[]` (both reviewer kinds, override attribution); `cards[]` gains `reviewStatus: none\|machine\|human` (human = ≥1 human review) — both additive |
+| Review scoring input | `site/scripts/derive.mjs` `buildScoreModel` | `reviewPerformed 5` — human reviews only (judge 0), published contributions only, self-review 0; `breakdown` gains `reviewsPerformed`; people profiles gain `reviewsPerformed[]` |
+| Editorial soft gate | `toolkit/plugins/openresearch/skills/publish/SKILL.md` | Validator hard-gates; judge referees and writes `<id>--judge.yaml` but never blocks; publish pauses on any `needs-work` for revise **or** contributor override-with-reason (20–500 chars, appended to the record, rendered on the page). `judge.ci` stays `false` |
+| Record templates | `content/templates/` | `review.yaml`, `replication.yaml` join `adoption.yaml`/`watchlist.yaml` |
+| Masthead CTA | `site/src/components/Masthead.astro` | Nav stays 4 reading items + search; `Contribute` is the single CTA (oxblood), not a fifth nav item |
+
 ## Planned freezes
 
-_None — all cycle checkpoints through CP-D are frozen above._
+_None — all cycle checkpoints through CP-F are frozen above._
