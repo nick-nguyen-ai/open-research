@@ -12,7 +12,11 @@ branch → commit → **print** push/PR commands (never call gh).
 ## Steps (exact)
 
 1. `npm run validate` → expect `✓ content validation passed`.
-2. Run `judge` on the target `<id>` inline (advisory; capture output).
+2. Run `judge` on the target `<id>` inline — it prints the referee report and writes
+   `content/records/reviews/<id>--judge.yaml`. Apply the editorial soft gate: all axes
+   ≥ adequate → continue; any `needs work` → contributor chooses revise or
+   override-with-reason (the override is appended to the record). Re-run
+   `npm run validate` if a record was written.
 3. `git checkout -b contribute/<id>`
 4. `git add content/contributions/<id>/ content/records/ content/benchmarks/`
 5. `git commit -m "contribute(<id>): <title>" -m "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"`
