@@ -10,5 +10,7 @@ const { card } = Astro.props;
   <div class="card-ev">
     <span class={card.replications > 0 ? "ev-verified" : ""}><b>{card.replications}</b> replication{card.replications === 1 ? "" : "s"}</span>
     <span><b>{card.teams}</b> team{card.teams === 1 ? "" : "s"}</span>
+    {card.reviewStatus === "human" && <span class="ev-verified">peer-reviewed</span>}
+    {card.reviewStatus === "machine" && <span>machine-reviewed</span>}
   </div>
 </a>

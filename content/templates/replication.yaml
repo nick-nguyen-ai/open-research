@@ -1,0 +1,26 @@
+# Replication record — you ran someone else's bundle and measured the result.
+# Place at: content/records/replications/<contribution-id>--<your-team>.yaml
+# The validator checks: schema (this shape) + crossref (contribution_id, and
+# benchmark_id if used, must resolve). One of benchmark_id | workflow is required.
+# Honest outcomes are the culture: partial and failed replications are welcome
+# and render on the page. Only cross-team outcome:replicated earns points
+# (replicator +12, author +15).
+
+contribution_id: some-contribution-id   # required — must match a published contribution's id
+replicator:                             # required — who ran it
+  name: Full Name
+  team: your-team                       # e.g. markets-analytics
+  division: Your Division               # optional but recommended (feeds the Arena divisions board)
+benchmark_id: some-benchmark-id         # one of benchmark_id | workflow — a registered benchmark…
+# workflow: what you ran it inside      # …or a 10+ char description of your own workflow
+method: >-                              # required, 20+ chars — what you actually did
+  Ran the bundle as-is against our corpus; same grader, same config, 20 runs.
+outcome: replicated                     # required — replicated | partial | failed
+measured_delta: "-48% p95"              # optional — the number you measured
+metrics:                                # optional — per-metric baseline vs treatment
+  - name: p95_latency_ms
+    baseline: 412
+    treatment: 214
+artifacts: link-or-path-to-run-output   # optional — where the raw runs live
+notes: anything the next replicator should know   # optional
+date: 2026-07-15                        # required — record date (YYYY-MM-DD)
