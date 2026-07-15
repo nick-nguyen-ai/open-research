@@ -1,0 +1,26 @@
+contribution_id: prompt-compression-long-context
+reviewer:
+  kind: llm-judge
+  model: claude-fable-5
+verdicts:
+  clarity: strong
+  claims_vs_evidence: needs-work
+  reproducibility: adequate
+statement: >-
+  Well-structured paper with an honest null on the summarization slice; however the
+  headline quality delta (-1.2pt) rests on policy-rag-bench runs executed only on the
+  authoring team's grader, and no independent record backs the 3x compression figure yet.
+suggestions:
+  - "index.md · mark the -1.2pt delta as self-reported until a cross-team replication lands · claims must name their evidence"
+  - "bundle/README.md · pin the grader version used for the quality scores · graders drift"
+override:
+  by:
+    name: Priyanka Nair
+    team: ib-quant
+    division: Institutional
+  reason: >-
+    The delta is measured on our own grader by design - the paper pre-registered that
+    metric. Publishing now with the caveat in the abstract; an external replication is
+    explicitly invited via the bundle and the watchlist entry.
+  date: "2026-07-15"
+date: "2026-07-15"

@@ -1,0 +1,14 @@
+contribution_id: heading-aware-chunking
+reviewer:
+  kind: human
+  name: Wei
+  team: Model Validation
+verdicts:
+  clarity: strong
+  claims_vs_evidence: strong
+  reproducibility: strong
+statement: >-
+  Ran the bundle against our validation corpus without modification; retrieval hit
+  rate improved in line with the stated range, and the one divergent slice matches
+  the partial replication already on record. The write-up is exactly reproducible.
+date: "2026-07-15"

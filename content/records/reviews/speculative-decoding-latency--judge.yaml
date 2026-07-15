@@ -1,0 +1,15 @@
+contribution_id: speculative-decoding-latency
+reviewer:
+  kind: llm-judge
+  model: claude-fable-5
+verdicts:
+  clarity: strong
+  claims_vs_evidence: strong
+  reproducibility: adequate
+statement: >-
+  The p95 headline is backed by the bundle's run table and the internal-eval-suite
+  benchmark; replication steps are copy-pasteable but assume access to the Risk
+  batch queue, which teams outside Risk will need to provision first.
+suggestions:
+  - "bundle/README.md · list the queue prerequisites explicitly · replicators outside Risk cannot assume them"
+date: "2026-07-15"
