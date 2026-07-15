@@ -13,7 +13,7 @@ test("arena.json has the frozen top-level shape", () => {
   const ind = a.individuals[0];
   assert.deepEqual(Object.keys(ind).sort(), ["breakdown", "division", "handle", "name", "score", "team"]);
   assert.deepEqual(Object.keys(ind.breakdown).sort(),
-    ["adoptions", "authored", "endorsements", "replicationsPerformed", "replicationsReceived"]);
+    ["adoptions", "authored", "endorsements", "replicationsPerformed", "replicationsReceived", "reviewsPerformed"]);
   assert.deepEqual(Object.keys(a.teams[0]).sort(), ["division", "members", "score", "team"]);
   assert.deepEqual(Object.keys(a.divisions[0]).sort(), ["division", "score", "teams"]);
 });
@@ -47,7 +47,7 @@ test("every published author has a profile; profile shape is frozen", () => {
   for (const c of published) for (const a of c.frontmatter.authors) assert.ok(people[slug(a.name)]);
   const anyProfile = Object.values(people)[0];
   assert.deepEqual(Object.keys(anyProfile).sort(),
-    ["breakdown", "contributions", "division", "handle", "name", "rank", "received", "replicationsPerformed", "score", "team"]);
+    ["breakdown", "contributions", "division", "handle", "name", "rank", "received", "replicationsPerformed", "reviewsPerformed", "score", "team"]);
 });
 
 test("evidence carries adoptions[] and changelog[] additively", () => {

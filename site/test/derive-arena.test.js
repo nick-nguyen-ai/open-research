@@ -9,15 +9,22 @@ function contrib(id, authors, { status = "published", title = id, tier = "findin
 }
 const A = (name, team, division) => ({ name, team, ...(division ? { division } : {}) });
 
-function content({ contributions = [], replications = [], endorsements = [], adoptions = [] } = {}) {
+function content({ contributions = [], replications = [], endorsements = [], adoptions = [], reviews = [] } = {}) {
   return {
     contributions,
     replications: replications.map((data) => ({ file: "r.yaml", data })),
     endorsements: endorsements.map((data) => ({ file: "e.yaml", data })),
     adoptions: adoptions.map((data) => ({ file: "a.yaml", data })),
+    reviews: reviews.map((data) => ({ file: "v.yaml", data })),
     errors: []
   };
 }
+const V = { clarity: "strong", claims_vs_evidence: "adequate", reproducibility: "strong" };
+const review = (id, reviewer, extra = {}) => ({
+  contribution_id: id, reviewer, verdicts: V,
+  statement: "Checked end to end against our own corpus and the claim held.",
+  date: "2026-07-15", ...extra
+});
 const now = () => new Date("2026-07-14T00:00:00Z");
 
 test("authored gives 10 to each author; generated is an iso date", () => {
@@ -26,7 +33,7 @@ test("authored gives 10 to each author; generated is an iso date", () => {
   const ann = a.individuals.find((i) => i.name === "Ann");
   assert.equal(ann.score, 10);
   assert.equal(ann.handle, "ann");
-  assert.deepEqual(ann.breakdown, { authored: 1, replicationsReceived: 0, replicationsPerformed: 0, adoptions: 0, endorsements: 0 });
+  assert.deepEqual(ann.breakdown, { authored: 1, replicationsReceived: 0, replicationsPerformed: 0, adoptions: 0, endorsements: 0, reviewsPerformed: 0 });
 });
 
 test("authored: multi-author contribution gives the full 10 to each author, not split", () => {
@@ -128,6 +135,32 @@ test("teams and divisions roll up; null-division teams are excluded from divisio
   assert.deepEqual(a.teams.map((t) => t.team).sort(), ["t1", "t2"]);
   assert.deepEqual(a.divisions.map((d) => d.division), ["D1"]); // t2 excluded (no division)
   assert.deepEqual(a.divisions[0].teams, ["t1"]);
+});
+
+test("human review: +5 to the reviewer; the judge and self-reviews score 0", () => {
+  const a = deriveArena(content({
+    contributions: [contrib("c1", [A("Ann", "t1")])],
+    reviews: [
+      review("c1", { kind: "human", name: "Bea", team: "t2" }),
+      review("c1", { kind: "llm-judge", model: "claude-fable-5" }),
+      review("c1", { kind: "human", name: "Ann", team: "t1" }) // self-review
+    ]
+  }), { now });
+  const bea = a.individuals.find((i) => i.name === "Bea");
+  assert.equal(bea.score, 5);
+  assert.equal(bea.breakdown.reviewsPerformed, 1);
+  assert.equal(a.individuals.find((i) => i.name === "Ann").score, 10); // authored only — self-review scored 0
+});
+
+test("reviews on draft or unknown contributions do not score", () => {
+  const a = deriveArena(content({
+    contributions: [contrib("c1", [A("Ann", "t1")], { status: "draft" })],
+    reviews: [
+      review("c1", { kind: "human", name: "Bea", team: "t2" }),
+      review("ghost", { kind: "human", name: "Cal", team: "t3" })
+    ]
+  }), { now });
+  assert.deepEqual(a.individuals, []);
 });
 
 test("buildScoreModel throws loudly on content errors", () => {
