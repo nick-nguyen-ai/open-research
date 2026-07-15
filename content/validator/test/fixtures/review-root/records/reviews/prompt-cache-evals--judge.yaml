@@ -1,0 +1,12 @@
+contribution_id: prompt-cache-evals
+reviewer:
+  kind: llm-judge
+  model: claude-fable-5
+verdicts:
+  clarity: strong
+  claims_vs_evidence: adequate
+  reproducibility: strong
+statement: >-
+  Clear finding with a copy-pasteable replication path; the cost claim is
+  self-reported but the bundle backs the method.
+date: "2026-07-15"

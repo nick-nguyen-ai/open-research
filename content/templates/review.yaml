@@ -1,0 +1,21 @@
+# Review record — a signed, structured read of someone else's contribution.
+# Place at: content/records/reviews/<contribution-id>--<your-slug>.yaml
+# The validator checks: schema (this shape) + crossref (contribution_id must resolve)
+# + review rule (an override requires at least one needs-work verdict).
+# A human review earns 5 arena points; reviewing your own contribution scores 0.
+
+contribution_id: some-contribution-id   # required — must match a published contribution's id
+reviewer:                               # required — humans use this form (the llm-judge form is machine-written)
+  kind: human
+  name: Full Name
+  team: your-team                       # e.g. markets-analytics
+  division: Your Division               # optional but recommended
+verdicts:                               # required — all three axes: strong | adequate | needs-work
+  clarity: adequate                     # would a busy engineer follow this and know what to do?
+  claims_vs_evidence: adequate          # is every quantitative claim backed by bundle/benchmark/record?
+  reproducibility: adequate             # could another team run the bundle as-is and reach the result?
+statement: >-                           # required, 20-2000 chars — your overall read, in one paragraph
+  What you checked, what held up, what did not.
+suggestions:                            # optional, max 5 — file · concrete change · why
+  - "index.md · concrete change · why it matters"
+date: 2026-07-15                        # required — record date (YYYY-MM-DD)

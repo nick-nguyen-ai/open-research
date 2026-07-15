@@ -9,7 +9,8 @@ import Footer from "../components/Footer.astro";
     <article class="cwrap">
       <h1 class="font-display">Publish in under 15 minutes</h1>
       <p class="lede">Everything on this site is a markdown file merged through a pull request.
-        Pick a tier, copy its template, and open a PR — mechanical CI is the only gate.</p>
+        Review works like a journal that publishes first: machines referee before the merge,
+        people review in the open after it — and both reviews live on the page.</p>
 
       <h2 class="caps" style="color: var(--oxblood)">Pick a tier</h2>
       <table>
@@ -23,17 +24,41 @@ import Footer from "../components/Footer.astro";
         </tbody>
       </table>
 
-      <h2 class="caps" style="color: var(--oxblood)">The flow</h2>
+      <h2 class="caps" style="color: var(--oxblood)">Stage 1 — before the merge (minutes, fully automated)</h2>
       <ol>
         <li>Copy the template from <code>content/templates/&lt;tier&gt;.md</code> into
-            <code>content/contributions/&lt;your-slug&gt;/index.md</code> (slug = the <code>id</code> field).</li>
-        <li>Add a <code>bundle/</code> directory with a README if others should be able to replicate it.</li>
-        <li>Run <code>npm run validate</code> locally — CI runs exactly the same checks.</li>
-        <li>Open a PR. Merge = published; git history is your attribution and versioning.</li>
+            <code>content/contributions/&lt;your-slug&gt;/index.md</code> (slug = the <code>id</code> field).
+            Add a <code>bundle/</code> with a README if others should be able to replicate it.</li>
+        <li><b>Desk check.</b> Run <code>npm run validate</code> — schema, required sections, links.
+            This is the only hard gate; CI runs exactly the same checks.</li>
+        <li><b>Referee report.</b> The <a href="/toolkit">toolkit's</a> <code>judge</code> writes a
+            structured review — <i>Clarity · Claims vs evidence · Reproducibility</i> — as a record
+            that publishes with your page. Every axis at <i>adequate</i> or better → your PR merges.</li>
+        <li><b>Revisions requested?</b> An axis at <i>needs work</i> pauses the merge. Revise and
+            re-run — or <b>publish over the objection</b> with a written reason. The dissenting
+            review and your reason appear together on the published page. No silent merges,
+            no silent rejections.</li>
       </ol>
 
-      <p>From M3, the <a href="/toolkit">toolkit</a> automates all of this: a
-        <code>publish</code> skill turns a braindump into a formatted, validated PR.</p>
+      <h2 class="caps" style="color: var(--oxblood)">Stage 2 — after publication (humans, in the open)</h2>
+      <p>Publication is where review begins, not where it ends. Anyone can add a signed record
+        to someone else's work — all of it renders on the contribution page:</p>
+      <table>
+        <thead><tr><th>Record</th><th>What it says</th><th>Template</th><th>Arena points</th></tr></thead>
+        <tbody>
+          <tr><td><b>Review</b></td><td>A structured read: the same three axes the machine referee scores, signed by you</td><td><code>review.yaml</code></td><td>5</td></tr>
+          <tr><td><b>Replication</b></td><td>You ran the bundle and measured — the strongest form of peer review</td><td><code>replication.yaml</code></td><td>12 (author +15)</td></tr>
+          <tr><td><b>Adoption</b></td><td>Your team runs it in a real pipeline</td><td><code>adoption.yaml</code></td><td>author +8</td></tr>
+        </tbody>
+      </table>
+      <p>A page climbs the ladder as evidence lands: <span class="lad">Machine-reviewed</span> →
+        <span class="lad">Peer-reviewed</span> → <span class="lad">Verified</span>. The judge earns
+        no points — credit is for people.</p>
+
+      <p class="pitch">Reviewing is not a favor here; it is scored, attributed work.
+        Your reviews and replications appear on <a href="/arena">the arena</a> and your
+        <a href="/browse">public profile</a> — the fastest way to build standing before
+        you publish your own first result.</p>
     </article>
     <Footer />
   </main>
@@ -52,4 +77,8 @@ import Footer from "../components/Footer.astro";
   code { font-family: ui-monospace, Consolas, monospace; font-size: .88em; background: var(--soft);
          border: 1px solid var(--hairline); border-radius: 4px; padding: 1px 5px; }
   a { color: var(--oxblood); }
+  .lad { font-family: system-ui, sans-serif; font-size: 12px; letter-spacing: .08em;
+         text-transform: uppercase; color: var(--verified); font-weight: 600; }
+  .pitch { border-top: 2px solid var(--ink); margin-top: 28px; padding-top: 14px;
+           font-family: var(--font-display); font-style: italic; font-size: 17px; }
 </style>

@@ -8,6 +8,7 @@ import ResultBand from "../../components/ResultBand.astro";
 import CitationBlock from "../../components/CitationBlock.astro";
 import ContentsList from "../../components/ContentsList.astro";
 import Rail from "../../components/Rail.astro";
+import PeerReview from "../../components/PeerReview.astro";
 import Changelog from "../../components/Changelog.astro";
 import Discussions from "../../components/Discussions.astro";
 import evidence from "../../data/evidence.json";
@@ -24,8 +25,11 @@ const fm = entry.data;
 const tier = fm.tier;
 const { Content, headings } = await render(entry);
 const h2s = headings.filter((h) => h.depth === 2);
-const ev = evidence[slug] ?? { replications: [], endorsements: [], adoptions: [], changelog: [], rev: null };
+const ev = evidence[slug] ?? { replications: [], endorsements: [], adoptions: [], reviews: [], changelog: [], rev: null };
 const adoptions = ev.adoptions ?? [];
+const reviews = ev.reviews ?? [];
+const reviewWord = reviews.some((r) => r.reviewer.kind === "human")
+  ? "Peer-reviewed" : reviews.length > 0 ? "Machine-reviewed" : null;
 const isNote = tier === "note";
 const showBand = Boolean(fm.result) && (tier === "finding" || tier === "technical-report" || tier === "research-paper");
 const verified = ev.replications.filter((r) => r.outcome === "replicated").length;
@@ -38,6 +42,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
                data-pagefind-meta={`tier:${tierLabel(tier)}, category:${fm.category}, evidence:${verified} replications`}>
         <span class="caps">
           <span class="tierword">{tierLabel(tier)}</span> · {fm.category}{isNote && ` · ${fmtDate(fm.updated, "full")}`}
+          {reviewWord && <Fragment> · <span class="revword">{reviewWord}</span></Fragment>}
         </span>
         <h1 class="font-display rt" transition:name={`title-${slug}`}>{fm.title}</h1>
         <p class="byline">
@@ -50,6 +55,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
         <div class="article-body">
           <Content />
         </div>
+        <PeerReview reviews={reviews} />
         <Changelog items={ev.changelog ?? []} />
         {!isNote && <CitationBlock fm={fm} slug={slug} rev={ev.rev} />}
         {isNote && (
@@ -75,6 +81,7 @@ const verified = ev.replications.filter((r) => r.outcome === "replicated").lengt
   @media (max-width: 760px) { .rgrid { grid-template-columns: 1fr; } }
   .rt { font-weight: 600; font-size: 30px; line-height: 1.15; margin: 10px 0 8px; text-wrap: balance; }
   .tierword { color: var(--tier, var(--slate)); }
+  .revword { color: var(--verified); }
   .byline { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--slate); margin-bottom: 20px; }
   .byline b { color: var(--ink); }
   .byline a.pl { color: inherit; text-decoration: none; border-bottom: 1px solid var(--hairline); }

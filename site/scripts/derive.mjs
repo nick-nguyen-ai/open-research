@@ -70,6 +70,15 @@ export function derive(contentRoot, { rev = gitRev, log = gitLog } = {}) {
   const reps = content.replications.map((r) => r.data);
   const endos = content.endorsements.map((e) => e.data);
   const adopts = content.adoptions.map((a) => a.data);
+  const revws = (content.reviews ?? []).map((r) => r.data);
+
+  // Review status ladder: human review outranks machine review outranks none.
+  const reviewStatusOf = (id) => {
+    const mine = revws.filter((r) => r.contribution_id === id);
+    if (mine.some((r) => r.reviewer.kind === "human")) return "human";
+    if (mine.length > 0) return "machine";
+    return "none";
+  };
 
   const cards = published.map((c) => {
     const fm = c.frontmatter;
@@ -86,7 +95,8 @@ export function derive(contentRoot, { rev = gitRev, log = gitLog } = {}) {
       replications: verified.length,
       teams: new Set(verified.map((r) => r.replicator.team)).size,
       result: fm.result ?? null,
-      authors: fm.authors.map((a) => a.name)
+      authors: fm.authors.map((a) => a.name),
+      reviewStatus: reviewStatusOf(fm.id)
     };
   }).sort((a, b) => b.date.localeCompare(a.date));
 
@@ -129,6 +139,18 @@ export function derive(contentRoot, { rev = gitRev, log = gitLog } = {}) {
         impact: a.impact ?? null,
         since: a.since,
         date: a.date
+      })),
+      reviews: revws.filter((r) => r.contribution_id === id).map((r) => ({
+        reviewer: r.reviewer.kind === "human"
+          ? { kind: "human", name: r.reviewer.name, team: r.reviewer.team }
+          : { kind: "llm-judge", model: r.reviewer.model },
+        verdicts: { ...r.verdicts },
+        statement: r.statement,
+        suggestions: r.suggestions ?? [],
+        override: r.override
+          ? { by: `${r.override.by.name} · ${r.override.by.team}`, reason: r.override.reason, date: r.override.date }
+          : null,
+        date: r.date
       })),
       changelog: log(c.dir),
       rev: rev(c.file)
@@ -183,7 +205,8 @@ const POINTS = {
   replicationPerformed: 12,
   adoption: 8,
   adoptionImpactBonus: 4,
-  endorsement: 3
+  endorsement: 3,
+  reviewPerformed: 5
 };
 
 // Builds the full scored model (individuals with detail + counts, teams, divisions), sorted.
@@ -204,8 +227,8 @@ export function buildScoreModel(content) {
     if (!people.has(name)) {
       people.set(name, {
         name, team: null, division: null, score: 0, repCount: 0,
-        breakdown: { authored: 0, replicationsReceived: 0, replicationsPerformed: 0, adoptions: 0, endorsements: 0 },
-        contributions: [], replicationsPerformed: [], received: []
+        breakdown: { authored: 0, replicationsReceived: 0, replicationsPerformed: 0, adoptions: 0, endorsements: 0, reviewsPerformed: 0 },
+        contributions: [], replicationsPerformed: [], reviewsPerformed: [], received: []
       });
     }
     return people.get(name);
@@ -302,6 +325,19 @@ export function buildScoreModel(content) {
     }
   }
 
+  // 5. Reviews (human only — the machine referee is staff, not faculty; self-review scores 0)
+  for (const rv of byFile(content.reviews ?? [])) {
+    const rec = rv.data;
+    if (rec.reviewer.kind !== "human") continue;
+    const c = byId.get(rec.contribution_id);
+    if (!c) continue;
+    if (c.frontmatter.authors.some((a) => a.name === rec.reviewer.name)) continue;
+    credit(rec.reviewer.name, rec.reviewer.team, rec.reviewer.division, POINTS.reviewPerformed);
+    const p = person(rec.reviewer.name);
+    p.breakdown.reviewsPerformed += 1;
+    p.reviewsPerformed.push({ slug: c.dirName, title: c.frontmatter.title, date: rec.date });
+  }
+
   const byScore = (keyName) => (a, b) =>
     b.score - a.score || b.repCount - a.repCount || a[keyName].localeCompare(b[keyName]);
 
@@ -349,6 +385,7 @@ export function derivePeople(content) {
       rank: i + 1, score: ind.score, breakdown: { ...ind.breakdown },
       contributions: ind.contributions,
       replicationsPerformed: ind.replicationsPerformed,
+      reviewsPerformed: ind.reviewsPerformed,
       received: ind.received
     };
   });

@@ -34,6 +34,28 @@ you find. Say so if they ask.
 4. Write **at most five** concrete, actionable suggestions (file · what · why).
    Fewer is better. Do not pad to five.
 5. End with a one-line overall verdict.
+6. **Write the referee report as a record.** Create or overwrite
+   `content/records/reviews/<id>--judge.yaml` with exactly what you printed:
+
+   ```yaml
+   contribution_id: <id>
+   reviewer:
+     kind: llm-judge
+     model: <your model id, e.g. claude-fable-5>
+   verdicts:
+     clarity: <strong|adequate|needs-work>          # "needs work" spells needs-work in YAML
+     claims_vs_evidence: <strong|adequate|needs-work>
+     reproducibility: <strong|adequate|needs-work>
+   statement: <the one-line overall verdict>
+   suggestions:                                      # omit the key if you had none
+     - "<file · concrete change · why>"
+   date: <today, YYYY-MM-DD>
+   ```
+
+   This record publishes openly on the contribution's page (open peer review).
+   It is still not a gate — `publish` reads it and applies the editorial policy.
+   Never write the `override:` block yourself; only `publish` adds it, on the
+   contributor's explicit decision.
 
 ## Output format (print exactly this shape)
 
@@ -53,7 +75,8 @@ Overall: <one line>. This is advisory; you may publish as-is.
 
 ## Rules
 
-- Never edit files. Never run the validator here (that is `publish`'s job).
+- The review record file is the **only** file you write. Never edit the draft or
+  any other file. Never run the validator here (that is `publish`'s job).
 - Never say "rejected", "blocked", or "must fix" — you have no authority to gate.
 - If a record exists but contradicts a claim, name the record file and the delta.
 - Be specific. "Tighten the Summary" is useless; "Summary claims −60% but the

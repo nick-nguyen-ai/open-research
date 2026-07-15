@@ -44,8 +44,10 @@ export default function BrowseFilter({ cards, filters, initial = {} }) {
             <h3>{c.title}</h3>
             <p className="card-summary">{c.summary}</p>
             <div className="card-ev">
-              <span><b>{c.replications}</b> replication{c.replications === 1 ? "" : "s"}</span>
+              <span className={c.replications > 0 ? "ev-verified" : ""}><b>{c.replications}</b> replication{c.replications === 1 ? "" : "s"}</span>
               <span><b>{c.teams}</b> team{c.teams === 1 ? "" : "s"}</span>
+              {c.reviewStatus === "human" && <span className="ev-verified">peer-reviewed</span>}
+              {c.reviewStatus === "machine" && <span>machine-reviewed</span>}
               {c.result && <span><b>{c.result}</b></span>}
             </div>
           </a>
