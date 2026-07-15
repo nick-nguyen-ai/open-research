@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Review record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contribution_id", "reviewer", "verdicts", "statement", "date"],
+  "properties": {
+    "contribution_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "reviewer": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name", "team"],
+          "properties": {
+            "kind": { "const": "human" },
+            "name": { "type": "string", "minLength": 1 },
+            "email": { "type": "string", "format": "email" },
+            "team": { "type": "string", "minLength": 1 },
+            "division": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "model"],
+          "properties": {
+            "kind": { "const": "llm-judge" },
+            "model": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "verdicts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clarity", "claims_vs_evidence", "reproducibility"],
+      "properties": {
+        "clarity": { "$ref": "#/definitions/verdict" },
+        "claims_vs_evidence": { "$ref": "#/definitions/verdict" },
+        "reproducibility": { "$ref": "#/definitions/verdict" }
+      }
+    },
+    "statement": { "type": "string", "minLength": 20, "maxLength": 2000 },
+    "suggestions": {
+      "type": "array",
+      "maxItems": 5,
+      "items": { "type": "string", "minLength": 10, "maxLength": 300 }
+    },
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["by", "reason", "date"],
+      "properties": {
+        "by": { "$ref": "#/definitions/person" },
+        "reason": { "type": "string", "minLength": 20, "maxLength": 500 },
+        "date": { "type": "string", "format": "date" }
+      }
+    },
+    "date": { "type": "string", "format": "date" }
+  },
+  "definitions": {
+    "verdict": { "enum": ["strong", "adequate", "needs-work"] },
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "team"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "team": { "type": "string", "minLength": 1 },
+        "division": { "type": "string" }
+      }
+    }
+  }
+}

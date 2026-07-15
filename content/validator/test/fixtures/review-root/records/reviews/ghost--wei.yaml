@@ -1,0 +1,12 @@
+contribution_id: ghost-contribution
+reviewer:
+  kind: human
+  name: Wei
+  team: Model Validation
+verdicts:
+  clarity: adequate
+  claims_vs_evidence: adequate
+  reproducibility: adequate
+statement: >-
+  This review points at a contribution that does not exist and must be flagged.
+date: "2026-07-15"

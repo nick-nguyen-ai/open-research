@@ -22,6 +22,7 @@ export function check(content) {
   checkGroup(content.endorsements, "endorsement", findings);
   checkGroup(content.benchmarks, "benchmark", findings);
   checkGroup(content.adoptions ?? [], "adoption", findings);
+  checkGroup(content.reviews ?? [], "review", findings);
   checkGroup(content.watchlist ?? [], "watchlist", findings);
   return findings;
 }
