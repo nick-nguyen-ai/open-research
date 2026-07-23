@@ -332,7 +332,7 @@ export function composeReply({ terms, detected, ranked, cards, filteredCount }) 
   const why = top.sections.length ? ` - matching sections: ${top.sections.join(", ")}` : "";
   const metric = card && card.result ? ` (${card.result})` : "";
   const n = ranked.length;
-  return `${n} contribution${plural(n)} match "${terms.join(" ")}".${facetText} Strongest match: "${card ? card.title : top.slug}"${metric}${why}.`;
+  return `${n} contribution${plural(n)} match${n === 1 ? "es" : ""} "${terms.join(" ")}".${facetText} Strongest match: "${card ? card.title : top.slug}"${metric}${why}.`;
 }
 
 // Orchestrator and phase 2 seam. turns: raw user messages (string[]).
