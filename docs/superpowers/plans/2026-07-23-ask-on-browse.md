@@ -339,10 +339,19 @@ export function composeReply({ terms, detected, ranked, cards, filteredCount }) 
 // activeChips: current chip state in applyFilter conventions - already
 // includes anything the island applied from the latest turn, so chips are
 // ground truth here and detection is only re-derived for reporting.
+// Ranking query = free terms plus detected facet values: a facet word like
+// "latency" both sets the chip and carries the strongest ranking signal, so
+// stripping it from the query would leave messages like "something about
+// latency" with nothing meaningful to score.
 export function askEngine(turns, activeChips, deps) {
   const { index, cards, filters } = deps;
   const parsed = turns.map((m) => parseIntent(m, filters));
-  const terms = accumulateTerms(parsed.map((p) => p.terms));
+  const facetTerms = parsed.map((p) =>
+    [p.detected.tier, p.detected.category, p.detected.tag]
+      .filter(Boolean)
+      .flatMap((v) => tokenize(v.replace(/-/g, " ")))
+  );
+  const terms = accumulateTerms([...parsed.map((p) => p.terms), ...facetTerms]);
   const last = parsed[parsed.length - 1];
   const detectedChips = last ? last.detected : { tier: null, category: null, tag: null };
   const ranked = rankDocs(index, terms, activeChips, cards);

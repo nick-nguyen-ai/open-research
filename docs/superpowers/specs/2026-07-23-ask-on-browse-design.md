@@ -95,7 +95,11 @@ both the island and `node --test` tests.
 - `askEngine(turns, activeChips, deps)` ->
   `{ reply, rankedSlugs, detectedChips }`
   Orchestrates the above. `deps` carries `{ index, cards, filters }` so tests
-  inject fixtures. This signature is the phase 2 seam.
+  inject fixtures. The ranking query is the accumulated free terms plus the
+  detected facet values themselves - a facet word like "latency" both sets
+  the chip and contributes ranking signal (stripping it entirely would leave
+  "something about latency" with nothing meaningful to score). This
+  signature is the phase 2 seam.
 
 ### Island changes: `BrowseFilter.jsx`
 
