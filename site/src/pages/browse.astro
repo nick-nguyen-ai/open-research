@@ -16,6 +16,13 @@ import filters from "../data/filters.json";
 </Base>
 <style>
   .bh { font-weight: 600; font-size: 30px; margin: 36px 0 18px; }
+  main :global(.ask-bar) { display: flex; gap: 10px; margin: 0 0 14px; }
+  main :global(.ask-input) { flex: 1; font: inherit; padding: 10px 12px; border: 1px solid var(--hairline); background: transparent; color: inherit; }
+  main :global(.ask-input:focus) { outline: 2px solid var(--oxblood); outline-offset: -1px; }
+  main :global(.ask-send) { font: inherit; padding: 10px 16px; border: 1px solid var(--oxblood); color: var(--oxblood); background: transparent; cursor: pointer; }
+  main :global(.ask-band) { display: flex; gap: 14px; align-items: baseline; justify-content: space-between; border: 1px solid var(--hairline); border-left: 3px solid var(--oxblood); padding: 12px 14px; margin: 0 0 14px; }
+  main :global(.ask-band p) { margin: 0; }
+  main :global(.ask-reset) { font: inherit; font-size: 13px; color: var(--oxblood); background: none; border: none; cursor: pointer; text-decoration: underline; white-space: nowrap; }
   main :global(.bf-row) { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   main :global(.bf-sep) { width: 1px; height: 18px; background: var(--hairline); margin: 0 4px; }
   main :global(.bf-count) { padding: 14px 0 0; }
