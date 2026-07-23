@@ -161,4 +161,5 @@ Island rendering follows the existing pattern of not being unit-tested
 - Create: `site/src/components/islands/ask-logic.mjs`
 - Create: `site/test/ask-logic.test.js`
 - Modify: `site/src/components/islands/BrowseFilter.jsx`
-- Modify: `site/src/styles/global.css` (ask bar + assistant band styles)
+- Modify: `site/src/pages/browse.astro` (ask bar + assistant band styles, scoped
+  next to the existing `bf-*` rules)
